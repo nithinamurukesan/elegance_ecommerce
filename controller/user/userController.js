@@ -6,6 +6,8 @@ const Category   = require('../../model/categoryModel')
 const Banners    = require('../../model/banner')
 const { log } = require('handlebars')
 
+const mongoose = require('mongoose')
+
 let otp
 let userOtp
 let hashedPassword
@@ -24,7 +26,7 @@ const loadHome = async(req, res)=>{
    
    try {
     const loadProData = await Product.find().lean()
-    const loadCatData = await Category.find().lean()
+    const loadCatData = await Category.find({isListed:true}).lean()
     const banners     = await Banners.find().lean()
     const userData = req.session.user
 
@@ -39,41 +41,126 @@ const loadHome = async(req, res)=>{
 //All product page
 
 
-const getProduct = async(req, res)=>{
-  try {
-    var page = 1
-    if(req.query.page){
-      page = req.query.page
-    }
-    const limit = 9;
-    const loadCatData = await Category.find().lean()
-    const proData = await Product.find({ is_blocked: false })
-    .skip((page - 1) * limit)
-    .limit(limit * 1)
-    .lean();
-    const count = await Product.find({}).count();
-    const totalPages = Math.ceil(count/limit)
-    const pages = Array.from({length: totalPages}, (_, i) => i + 1); 
+const getProduct = async (req, res) => {
+    const user = req.session.user;
 
-    res.render('user/products', {proData, pages , currentPage: page , userData, loadCatData}) 
-  } catch (error) {
-    console.log(error);
-  }
-}
+    try {
+        let page = 1; // Initial page is always 1 for the GET request
+        const limit = 6;
+        const loadCatData = await Category.find().lean();
+        const proData = await Product.find({ is_blocked: false })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .populate('category', 'category')
+            .lean();
+        const count = await Product.countDocuments({ is_blocked: false });
+        const totalPages = Math.ceil(count / limit);
+        const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+        res.render('user/products', {
+            proData,
+            pages,
+            currentPage: page,
+            userData: user,
+            loadCatData,
+            currentFunction: 'getProductsPage',
+            layout:'productLayout'
+            
+        });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+const getProductsPage = async (req, res) => {
+    const user = req.session.user;
+
+    try {
+        const page = parseInt(req.body.page); // Get the page number from the POST request
+        const limit = 6;
+        const proData = await Product.find({ is_blocked: false })
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .populate('category', 'category')
+            .lean();
+        const count = await Product.countDocuments({ is_blocked: false });
+        const totalPages = Math.ceil(count / limit);
+        const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+        res.json({
+            proData,
+            pages,
+            currentPage: page,
+            currentFunction: 'getProductsPage'
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
 
 
 //Product details page
 
+
+// const ProductView = async(req, res)=>{
+//     try {
+//       const proId = req.query.id
+//       const proData = await Product.findById(proId).lean()
+//       const userData = req.session.user
+    
+
+//       if (userData) {
+//         res.render('user/productview', {proData, userData})
+//       }else{
+//         res.render('user/productview', {proData})    
+//       }
+//     } catch (error) {
+//         console.log(error);
+//     }
+// }
 
 const ProductView = async(req, res)=>{
     try {
       const proId = req.query.id
       const proData = await Product.findById(proId).lean()
       const userData = req.session.user
+    //   const userId = userData._id
+        // let productExistInCart
+
+        // const ObjectId = mongoose.Types.ObjectId;
+
+        // // query
+        // const productExist = await User.find({ _id: userId , "cart.product": new ObjectId(proId)}).lean();
+        await Product.updateOne(
+            {
+                _id: proId
+            },
+            {
+                $inc:{
+                    popularity:1
+                }
+            }
+        )
+
+
     
 
+
+
       if (userData) {
-        res.render('user/productview', {proData, userData})
+            const userId = userData._id
+            let productExistInCart
+
+            const ObjectId = mongoose.Types.ObjectId;
+    
+            // query
+            const productExist = await User.find({ _id: userId , "cart.product": new ObjectId(proId)}).lean();
+
+            if(productExist.length === 0) productExistInCart = false
+            else productExistInCart = true
+            
+        res.render('user/productview', {proData, userData ,  productExistInCart})
       }else{
         res.render('user/productview', {proData})    
       }
@@ -131,6 +218,29 @@ const usersignup = (req, res)=>{
     }
 }
 
+//google authentication
+
+const googleCallback =  async (req, res) => {
+    try {
+      // Add the user's name to the database
+      userData = await User.findOneAndUpdate(
+        { email: req.user.email },
+        { $set: { name: req.user.displayName,isVerified:true,isBlocked:false } },
+        { upsert: true,new :true }
+      );
+      console.log(userData)
+  
+      // Set the user session
+       req.session.LoggedIn = true
+        req.session.user = userData
+      // Redirect to the homepage
+      res.redirect('/');
+    } catch (err) {
+      console.error(err);
+      res.redirect('/login');
+    }
+  }
+
 //To get otp page
 
 const getOtp = (req, res)=>{
@@ -145,34 +255,40 @@ const getOtp = (req, res)=>{
 
 //Submit otp and save user
 
-const submitOtp = async (req, res)=>{
+const submitOtp = async (req, res) => {
     try {
-        userOtp = req.body.otp
+        userOtp = req.body.otp;
 
 
-        if(userOtp == otp){
+        if (userOtp == otp) {
             const user = new User({
                 name: userRegData.name,
-                email:userRegData.email,
+                email: userRegData.email,
                 mobile: userRegData.phone,
                 password: hashedPassword,
                 isVerified: true,
-                isBlocked: false  
-            })
-    
-            await user.save()
+                isBlocked: false,
+            });
 
-            req.session.regSuccessMsg = true
-            res.redirect('/login')
-          }else{
-            otpError = 'incorrect otp'
-            res.render('user/submitOtp', {otpError})
-      }  
+            await user.save();
+
+            req.session.regSuccessMsg = true;
+
+            // Send JSON response with success message
+            res.json({ success: true, redirectUrl: '/login' });
+        } else {
+            otpError = 'incorrect otp';
+
+            // Send JSON response with error message
+            res.json({ error: otpError });
+        }
     } catch (error) {
         console.log(error);
-    }  
-}
 
+        // Send JSON response with error message
+        res.json({ error: 'An error occurred while submitting the OTP.' });
+    }
+};
 
 //To resend otp
 
@@ -196,6 +312,9 @@ const doLogin = async(req, res)=>{
        let password = req.body.password
 
        userData = await User.findOne({ email: email });
+       console.log(userData.password)
+       console.log(email)
+       console.log(password)
 
        if(userData){
           if (await argon2.verify(userData.password, password)){ 
@@ -303,47 +422,74 @@ const productSearch = async(req, res)=>{
     }
 
 
-    const sortProduct_az = async(req, res) => {
+    const sortProductByName = async (req, res) => {
         try {
-            const { sort, catId } = req.body
-          
-            if( catId ){
-                const products = await Product.find({ category : catId }, {is_blocked: false}).sort({ name: sort });
-                res.json(products)   
-               
-            } else{
-                const products = await Product.find( {is_blocked: false}).sort({ name: sort });
-                res.json(products)
+            const { sort, catId, page } = req.body;
+            console.log('Sort:', sort); // Log sort order
+            const limit = 6;
+            const skip = (page - 1) * limit;
+    
+            let query = { is_blocked: false };
+            if (catId) {
+                query.category = catId;
             }
-
+    
+            const sortOrder = sort === 'asc' ? 1 : -1;
+    
+            const products = await Product.find(query)
+                .sort({ name: sortOrder })
+                .populate('category', 'category')
+                .skip(skip)
+                .limit(limit)
+                .lean();
+    
+            const count = await Product.countDocuments(query);
+            const totalPages = Math.ceil(count / limit);
+            const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+    
+            res.json({ productData: products, pages, currentPage: page, sort });
         } catch (error) {
             console.log(error);
+            res.status(500).json({ error: 'Internal server error' });
         }
-    }
+    };
 
 
-    const sortProductByPrice = async(req, res) => {
+    const sortProductByPrice = async (req, res) => {
         try {
-            const { sort, catId } = req.body
-
-            if(catId){
-                const products = await Product.find({ category : catId }, {is_blocked: false}).sort({ price: sort });
-                res.json(products)
-            }else{               
-            const products = await Product.find({is_blocked: false}).sort({ price: sort });
-            res.json(products)
-             }
-
+            const { sort, catId, page } = req.body;
+            console.log(sort, catId, page); // Log sort order
+            const limit = 6;
+            const skip = (page - 1) * limit;
+    
+            let query = { is_blocked: false };
+            if (catId) {
+                query.category = catId;
+            }
+    
+            const products = await Product.find(query)
+                .sort({ price: sort })
+                .populate('category', 'category')
+                .skip(skip)
+                .limit(limit)
+                .lean();
+    
+            const count = await Product.countDocuments(query);
+            const totalPages = Math.ceil(count / limit);
+            const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+    
+            res.json({ productData: products, pages, currentPage: page, sort });
         } catch (error) {
             console.log(error);
+            res.status(500).json({ error: 'Internal server error' });
         }
-    }
-
+    };
 
 
 module.exports = {
     doLogout, 
     getProduct, 
+    getProductsPage,
     loadHome ,  
     ProductView, 
     userLogin, 
@@ -354,6 +500,7 @@ module.exports = {
     getOtp,
     resendOtp,
     productSearch,
-    sortProduct_az,
+    sortProductByName,
     sortProductByPrice,
+    googleCallback,
 }

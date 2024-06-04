@@ -65,26 +65,26 @@
                                         <td class="action" data-title="Remove"><a onclick="removeCartalert('{{this.product._id}}')" class="text-muted"><i class="fi-rs-trash"></i></a></td>
                                     </tr>
                                     {{/each}}
-                                    <tr>
+                                    {{!-- <tr>
                                         <td colspan="6" class="text-end">
-                                            <a onclick="removeCartalert('{{this.product._id}}')" class="text-muted"> <i class="fi-rs-cross-small"></i> Clear Cart</a>
+                                            <a onclick="removeCartalert('{{this.product._id}}')" class="text-muted"> </a>
                                         </td>
-                                    </tr>
+                                    </tr> --}}
                                 </tbody>
                             </table>
                         </div>
-                        <div class="cart-action text-end">
+                        {{!-- <div class="cart-action text-end">
                             <a class="btn  mr-10 mb-sm-15"><i class="fi-rs-shuffle mr-10"></i>Update Cart</a>
                             <a class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
-                        </div>
+                        </div> --}}
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
                         <div class="row mb-50">
                             <div class="col-lg-6 col-md-12">
-                                <div class="heading_s1 mb-3">
+                                {{!-- <div class="heading_s1 mb-3">
                                     <h4>Calculate Shipping</h4>
-                                </div>
-                                <p class="mt-15 mb-30">Flat rate: <span class="font-xl text-brand fw-900">5%</span></p>
-                                <form class="field_form shipping_calculator">
+                                </div> --}}
+                                {{!-- <p class="mt-15 mb-30">Flat rate: <span class="font-xl text-brand fw-900">5%</span></p> --}}
+                                {{!-- <form class="field_form shipping_calculator">
                                     <div class="form-row">
                                         <div class="form-group col-lg-12">
                                             <div class="custom_select">
@@ -104,15 +104,15 @@
                                             <button class="btn  btn-sm"><i class="fi-rs-shuffle mr-10"></i>Update</button>
                                         </div>
                                     </div>
-                                </form>
-                                <div class="mb-30 mt-50">
+                                </form> --}}
+                                {{!-- <div class="mb-30 mt-50">
                                     <div class="heading_s1 mb-3">
                                         <h4>Apply Coupon</h4>
                                     </div>
                                     <div class="total-amount">
                                         <div class="left">
                                             <div class="coupon">
-                                                <form action="#" target="_blank">
+                                                <form action="#" >
                                                     <div class="form-row row justify-content-center">
                                                         <div class="form-group col-lg-6">
                                                             <input class="font-medium" name="Coupon" placeholder="Enter Your Coupon">
@@ -125,7 +125,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                             <div class="col-lg-6 col-md-12">
                                 <div class="border p-md-4 p-30 border-radius cart-totals">
@@ -139,14 +139,14 @@
                                                     <td class="cart_total_label">Cart Subtotal</td>
                                                     <td class="cart_total_amount"><span class="font-lg fw-900 text-brand" id="subTotal">{{subTotal}}</span></td>
                                                 </tr>
-                                                <tr>
+                                                {{!-- <tr>
                                                     <td class="cart_total_label">Shipping</td>
                                                     <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free Shipping</td>
-                                                </tr>
-                                                <tr>
+                                                </tr> --}}
+                                                {{!-- <tr>
                                                     <td class="cart_total_label">Total</td>
                                                     <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand" id="subTotal2">{{subTotal}}</span></strong></td>
-                                                </tr>
+                                                </tr> --}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -191,7 +191,7 @@
 				})
 			}
 		   document.getElementById('subTotal').innerText = subTotal
-           document.getElementById('subTotal2').innerText = subTotal
+     
 
 			let data = await fetch('/cart_updation',{
 				method:"POST",
@@ -229,6 +229,7 @@
     removeFromCart(proId, cartId)
   } else if (result.dismiss === Swal.DismissReason.cancel) {
 	removeFromCart(proId, cartId)
+    
   }
 }
 

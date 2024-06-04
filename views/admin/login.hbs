@@ -25,18 +25,21 @@
                 <h4 class="card-title m-auto mb-4">Login</h4>
                 <form method="post" action="/admin/login">
                     <div class="mb-3">
-                        <input class="form-control" placeholder="Username or email" name="email" type="email">
+                        <input class="form-control" placeholder="Username or email"  id="email" name="email" type="email" required>
+                        <div class="error" style="color: red;" id="emailError"></div>
                     </div> <!-- form-group// -->
                     <div class="mb-3">
-                        <input class="form-control" placeholder="Password" name="password" type="password">
+                        <input class="form-control" placeholder="Password" id="password" name="password" type="password" required>
+                        <div class="error" style="color: red;" id="passwordError"></div>
                     </div> <!-- form-group// -->
                     <div class="mb-3">
-                        <a href="#" class="float-end font-sm text-muted">Forgot password?</a>
+                       
                         <label class="form-check">
-                            <input type="checkbox" class="form-check-input" checked="">
-                            <span class="form-check-label">Remember</span>
+                            <input type="checkbox" class="form-check-input" id="showPasswordCheckbox"
+                                onchange="togglePasswordVisibility()">
+                            <span class="form-check-label">show password</span>
                         </label>
-                    </div> <!-- form-group form-check .// -->
+                    </div><!-- form-group form-check .// -->
                     <div class="mb-4">
                         <button type="submit" class="btn btn-primary w-100"> Login </button>
                     </div> <!-- form-group// -->
@@ -79,4 +82,55 @@
         <p class="font-xs mb-30">All rights reserved</p>
     </footer>
 </main>
+<script>
+    /**
+     * Email validation
+     */
+    function validate_email() {
+        var email = document.getElementById('email').value.trim();
+        var emailPattern = /^\S+@\S+\.\S+$/;
+        var emailError = document.getElementById('emailError');
+
+        if (!emailPattern.test(email)) {
+            emailError.textContent = "Invalid email. Please try again.";
+            document.getElementById('email').focus();
+            return false;
+        } else {
+            emailError.textContent = "";
+            return true;
+        }
+    }
+
+    /**
+     * Password validation
+     */
+    function validatePassword() {
+        var password = document.getElementById('password').value.trim();
+        var passwordPattern = /^.{8,}$/;;
+        var passwordError = document.getElementById('passwordError');
+
+        if (!passwordPattern.test(password)) {
+            passwordError.textContent = "Invalid password. Password must be at least 8 characters long and contain at least one letter and one digit.";
+            document.getElementById('password').focus();
+            return false;
+        } else {
+            passwordError.textContent = "";
+            return true;
+        }
+    }
+
+    function togglePasswordVisibility() {
+                    var passwordInput = document.getElementById('password');
+                    var checkbox = document.getElementById('showPasswordCheckbox');
+
+                    if (checkbox.checked) {
+                        passwordInput.type = "text";
+                    } else {
+                        passwordInput.type = "password";
+                    }
+                }
+
+
+
+</script>
 

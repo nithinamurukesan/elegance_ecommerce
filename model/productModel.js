@@ -20,7 +20,7 @@ const produtSchema = new mongoose.Schema({
 
     category: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Category',
+        ref: 'category',
         required: true
     },
 
@@ -48,6 +48,16 @@ const produtSchema = new mongoose.Schema({
     isOnCart: {
         type: Boolean,
         default: false,
+    },
+
+    popularity:{
+        type:Number,
+        default:0
+    },
+    
+    bestSelling:{
+        type:Number,
+        default:0
     }
 
 })

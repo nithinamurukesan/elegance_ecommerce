@@ -56,7 +56,7 @@
                                     <div class="clearfix product-price-cover">
                                         <div class="product-price primary-color float-left">
                                             <ins><span class="text-brand">₹{{proData.price}}</span></ins>
-                                            <ins><span class="old-price font-md ml-15">₹{{proData.price}}</span></ins>
+                                            <ins><span class="old-price font-md ml-15">₹{{add 200 proData.price}}</span></ins>
                                             <span class="save-price  font-md color3 ml-15">25% Off</span>
                                         </div>
                                     </div>
@@ -68,7 +68,7 @@
                                         <ul>
                                             <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year AL Jazeera Brand
                                                 Warranty</li>
-                                            <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy
+                                            <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> Return, If any damages
                                             </li>
                                             <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
                                         </ul>
@@ -112,28 +112,19 @@
                                         <div class="product-extra-link2">
 
                                             
-								   {{#if proData.stock}}
-                                   {{#if proData.isOnCart}}
-
-                                <button onclick="window.location.href='/cart?id={{userData._id}}'" class="button button-add-to-cart">Go to cart</button>
-                                    {{else}}
-
-                                    <span id="cart_btn">
-                                            <button onclick="addToCartBtn('{{proData._id}}')"  id="add_to_cart_btn" class="button button-add-to-cart">Add to cart</button>
-                                            </span>
-
-                                    {{/if}}
-									 
-									 {{else}}
-                                      
-									  <div onclick="outofStock()">
-									  <button disabled id="add_to_cart_btn"
-										class="button button-add-to-cart">
-										Add to cart
-									  </button>
-									  </div>
-
-									  {{/if}}
+								  {{#if proData.stock}}
+            {{#if productExistInCart}}
+                <button onclick="window.location.href='/cart?id={{userData._id}}'" class="button button-add-to-cart">Go to cart</button>
+            {{else}}
+                <span id="cart_btn">
+                    <button onclick="addToCartBtn('{{proData._id}}')" id="add_to_cart_btn" class="button button-add-to-cart">Add to cart</button>
+                </span>
+            {{/if}}
+        {{else}}
+            <div onclick="outofStock()">
+                <button disabled id="add_to_cart_btn" class="button button-add-to-cart">Out Of Stock</button>
+            </div>
+        {{/if}}
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                             <a aria-label="Compare" class="action-btn hover-up"
@@ -654,43 +645,52 @@
     </section>
 </main>
 
+
+
+
 <script>
  
+const addToCartBtn = (proId) => {
+    const productid = document.getElementById('add_to_cart_btn').value;
+    const productName = document.getElementsByName('product_name')[0].value;
+    
+    console.log(productName);
 
-const addToCartBtn = async (proId) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', `/add_to_cart?id=${proId}`, true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
 
-const productid = document.getElementById('add_to_cart_btn').value
-const productName = document.getElementsByName('product_name')[0].value
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            const data = JSON.parse(xhr.responseText);
+            console.log(data, 'from add to cart btn....');
 
-console.log(productName)
- 
-const response = await fetch(`/add_to_cart?id=${proId}`, {
-method: 'GET',
-headers: {
-'Content-Type': "application/json",
-},
-})
+            document.getElementById('cart_btn').innerHTML = 
+                `<button onclick="window.location.href='/cart?id={{userData._id}}'" class="button button-add-to-cart">Go to cart</button>`;
 
-let data = await response.json()
-console.log(data, 'from add to cart btn....')
+            if (data) {
+                swal("Awww 🥳!", `${productName} added to Cart! `, "success");
+            }
+        }
+    };
 
-document.getElementById('cart_btn').innerHTML = 
-`<button onclick="window.location.href='/cart?id={{userData._id}}'" class="button button-add-to-cart">Go to cart</button>`
-
-
-if(data){
-  swal("Awww 🥳!", `${productName} added to Cart! `, "success");
-}
-
-}
-
+    xhr.send();
+};
 
 
-const outofStock = () => {
-	alertify.set('notifier', 'position', 'bottom-center');
-	alertify.success(`Item Out of stock`)
-}
+
+
+
+
 
 </script>
 
+
+<script>
+        const outofStock = () => {
+            alertify.set('notifier', 'position', 'bottom-center');
+            alertify.success('Item Out of stock');
+        }
+    
+</script>
     

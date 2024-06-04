@@ -8,6 +8,8 @@ const Orders      = require("../../model/order");
 const Address     = require("../../model/address");
 const Banner      = require('../../model/banner')
 const moment      = require("moment");
+const fs= require('fs')
+const path= require('path')
 
 let adminData 
 let catSaveMsg = "Category added suceessfully..!!";
@@ -23,8 +25,8 @@ const adminLogin = (req, res) => {
 const adminDoLogin = async (req, res) => {
   try {
     adminData = {
-      email: "admin@gmail.com",
-      password: "Admin@123"
+      email: process.env.ADMIN_EMAIL,
+      password: process.env.ADMIN_PASSWORD
     };
 
     let adminEmail = req.body.email;
@@ -34,10 +36,10 @@ const adminDoLogin = async (req, res) => {
     //adminData = await Admin.findOne({ email: adminEmail });
 
     if (adminData) {
-      if (adminPassword === adminData.password) {
+      if (adminPassword === adminData.password ) {
         req.session.aLoggedIn = true;
         req.session.admin = adminData;
-        res.redirect("/admin/product");
+        res.redirect("/admin/home");
       } else {
         res.render("admin/login", { message: "incorrect email or password" ,layout:'loginlayout'});
       }
@@ -45,7 +47,8 @@ const adminDoLogin = async (req, res) => {
       res.render("admin/login", { message: "incorrect email or password" , layout:'loginlayout'});
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+        res.status(500).send("Internal Server Error");
   }
 };
 
@@ -58,6 +61,7 @@ const adminLogout = async (req, res) => {
     res.redirect("/admin/login");
   } catch (error) {
     console.log(error.message);
+        res.status(500).send("Internal Server Error");
   }
 };
 
@@ -69,7 +73,8 @@ const loadHome = (req, res) => {
   try {
     res.render("admin/home",{layout:'adminlayout'});
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+        res.status(500).send("Internal Server Error");
   }
 };
 
@@ -78,10 +83,22 @@ const loadHome = (req, res) => {
 
 const loadUsersData = async (req, res) => {
   try {
-    let allUsersData = await adminHelper.getAllUsersData();
-    res.render("admin/manage_users", { allUsersData, layout:'adminlayout' });
+    var page = 1
+    if(req.query.page){
+      page = req.query.page
+    }
+    const limit = 3;
+    let allUsersData = await await User.find()
+    .skip((page - 1) * limit)
+    .limit(limit * 1)
+    .lean();
+    const count = await User.find({}).count();
+    const totalPages = Math.ceil(count/limit)
+    const pages = Array.from({length: totalPages}, (_, i) => i + 1); 
+    res.render("admin/manage_users", { allUsersData,  pages , currentPage: page ,layout: 'adminlayout' });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+        res.status(500).send("Internal Server Error");
   }
 };
 
@@ -89,7 +106,7 @@ const loadUsersData = async (req, res) => {
 
 const blockUser = async (req, res) => {
   try {
-    let id = req.params.id;
+    let {id} = req.body;
 
     const blockUser = await User.findById(id);
     let isBlocked = blockUser.isBlocked;
@@ -102,7 +119,8 @@ const blockUser = async (req, res) => {
 
     res.redirect("/admin/manage_users");
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -110,14 +128,26 @@ const blockUser = async (req, res) => {
 
 const getCategory = async (req, res) => {
   try {
-    let allCtegoryData = await adminHelper.getAllCtegoryData();
+    var page = 1
+    if (req.query.page) {
+      page = req.query.page
+    }
+    const limit = 3;
+    let allCtegoryData = await Category.find()
+      .skip((page - 1) * limit)
+      .limit(limit * 1)
+      .lean();
+
+    const count = await Category.find({}).count();
+    const totalPages = Math.ceil(count / limit)
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
     let catUpdtMsg = "Category updated successfully..!!";
 
     if (req.session.categoryUpdate) {
-      res.render("admin/category", { allCtegoryData, catUpdtMsg,layout:'adminlayout' });
+      res.render("admin/category", { allCtegoryData, pages , currentPage: page,catUpdtMsg, layout: 'adminlayout' });
       req.session.categoryUpdate = false;
     } else {
-      res.render("admin/category", { allCtegoryData, layout:'adminlayout' });
+      res.render("admin/category", { allCtegoryData, pages , currentPage: page, layout: 'adminlayout' });
     }
   } catch (error) {
     console.log(error);
@@ -230,34 +260,41 @@ const editCategory = async (req, res) => {
 
 const updateCategory = async (req, res) => {
   try {
-      const catName = req.body.name;
-      const image = req.file
-      const catId  = req.params.id
+    const catName = req.body.name;
+    const image = req.file;
+    const catId = req.params.id;
 
-      const cat  = await Category.findById(catId)
-      const catImg = cat.imageUrl;
-      let updImge
-      if (image) {
-        updImge  = image.filename
-      }
-      else {
-        updImge  = catImg
-      }
+    const cat = await Category.findById(catId);
+    const catImg = cat.imageUrl;
+    let updImge;
 
-      const catExist = await Category.findOne({ name: req.body.name })
-      if (!catExist) {
-          await Category.findByIdAndUpdate(catId, {
-              category: req.body.name,
-              imageUrl: updImge 
-          },
-              { new: true })
-          res.redirect('/admin/category')
-      }
-  } catch (error) {
-      console.log(error)
-  }
-}
+    if (image) {
+      updImge = image.filename;
+    } else {
+      updImge = catImg;
+    }
 
+
+    const catExist = await Category.findOne({ category: { $regex: new RegExp("^" + catName + "$", "i") } });
+
+    if (!catExist) {
+      await Category.findByIdAndUpdate(
+        catId,
+        {
+          category: req.body.name,
+          imageUrl: updImge,
+        },
+        { new: true }
+      );
+
+      req.session.categoryUpdate = true;
+      res.redirect("/admin/category");
+    } else {
+      // req.session.catExist = true
+      res.redirect("/admin/category");
+    }
+  } catch (error) { }
+};
 /// To delete category ///
 
 // const deleteCategory = async (req, res) => {
@@ -273,11 +310,12 @@ const updateCategory = async (req, res) => {
 
 const deleteCategory = async (req, res) => {
   try {
-      const catId = req.params.id
-      let user = await Category.findById(catId)
+    const {id}=req.body
+      // const catId = req.params.id
+      let user = await Category.findById(id)
       let newListed = user.isListed
 
-      await Category.findByIdAndUpdate(catId, {
+      await Category.findByIdAndUpdate(id, {
           isListed: !newListed
       },
       { new: true })
@@ -319,6 +357,7 @@ const getProduct = async (req, res) => {
           $limit: limit * 1
       }
     ]);
+    console.log(productData)
 
     const count = await Product.find({}).count();
     console.log(count)
@@ -358,7 +397,7 @@ const newProduct = async (req, res) => {
 
 const getOrders = async (req, res) => {
   try {
-    const PAGE_SIZE = 10;
+    const PAGE_SIZE = 5;
     const page = parseInt(req.query.page) || 1;
     const skip = (page - 1) * PAGE_SIZE;
 
@@ -378,12 +417,16 @@ const getOrders = async (req, res) => {
       };
     });
 
+    const totalPages = Math.ceil(await Orders.countDocuments()/PAGE_SIZE)  // Example value
+    const pages = Array.from({length: totalPages}, (_, i) => i + 1);
+
     console.log(ordersData);
 
     res.render("admin/orders", {
-      ordersData,
+    
+      ordersData, pages ,
       currentPage: page,
-      totalPages: Math.ceil(await Orders.countDocuments() / PAGE_SIZE),
+      // totalPages: Math.ceil(await Orders.countDocuments() / PAGE_SIZE),
       layout:'adminlayout'
     });
   } catch (error) {
@@ -481,29 +524,27 @@ const updateProduct = async (req, res) => {
 /// To delete Product ///
 
 const deleteProduct = async (req, res) => {
-  const proId = req.params.id;
-  await Product.findByIdAndDelete(proId)
-  res.redirect('/admin/product')
-  // const prodData = await Product.findById(proId);
-  // const isBlocked = prodData.is_blocked;
+  const {id} = req.body
+  let deletedProd=await Product.findByIdAndDelete(id)
+  const arrprod=deletedProd.imageUrl
+  console.log(arrprod)
+   arrprod.forEach((deletedImage)=>{
+    const imagePath = `public/images/products/${deletedImage}`;
+      console.log(imagePath)
+      fs.unlinkSync(imagePath);
 
-  // const proData = await Product.findByIdAndUpdate(
-  //   proId,
-  //   { $set: { is_blocked: !isBlocked } },
-  //   { new: true }
-  // );
-
-  // res.redirect("/admin/product");
-  // req.session.proDelete = true;
+  })
+  
 };
 
 const blockProduct = async (req, res) => {
-  const proId = req.params.id;
-  const prodData = await Product.findById(proId);
+  const {id} =req.body
+  // const proId = req.params.id;
+  const prodData = await Product.findById(id);
   const isBlocked = prodData.is_blocked;
 
   const proData = await Product.findByIdAndUpdate(
-    proId,
+    id,
     { $set: { is_blocked: !isBlocked } },
     { new: true }
   );
@@ -514,7 +555,21 @@ const blockProduct = async (req, res) => {
 
 const loadCoupon = async (req, res) => {
   try {
-    const coupon = await Coupon.find();
+    var page = 1
+  if(req.query.page){
+    page = req.query.page
+  }
+  const limit = 5;
+  let coupon = await Coupon.find()
+  .skip((page - 1) * limit)
+  .limit(limit * 1)
+  const count = await Coupon.find({}).count();
+  const totalPages = Math.ceil(count/limit)
+  const pages = Array.from({length: totalPages}, (_, i) => i + 1); 
+  console.log(coupon)
+
+
+    // const coupon = await Coupon.find();
 
     const now = moment();
 
@@ -527,12 +582,11 @@ const loadCoupon = async (req, res) => {
       };
     });
 
-    res.render("admin/coupon", { couponData, layout:'adminlayout' });
+    res.render("admin/coupon", { couponData,pages , currentPage: page ,layout: 'adminlayout' });
   } catch (error) {
     console.log(error);
   }
 };
-
 const addCoupon = (req, res) => {
   try {
     const couponMsg = "Coupon added successfuly..!!";
@@ -554,7 +608,7 @@ const addCoupon = (req, res) => {
 
 const addCouponPost = async (req, res) => {
   try {
-    const { code, percent, expDate } = req.body;
+    const { code, percent, expDate, minPurchase, maxDiscount } = req.body;
 
     const cpnExist = await Coupon.findOne({ code: code });
 
@@ -563,6 +617,8 @@ const addCouponPost = async (req, res) => {
         code: code,
         discount: percent,
         expiryDate: expDate,
+        minPurchase: minPurchase,
+        maxDiscount: maxDiscount,
       });
 
       await coupon.save();
@@ -574,16 +630,22 @@ const addCouponPost = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    res.status(500).send('Internal Server Error');
   }
 };
 
+
 const deleteCoupon = async (req, res) => {
   try {
-    const id = req.query.id;
+    const {id} = req.body
+    console.log(id)
 
     await Coupon.findByIdAndDelete(id);
 
-    res.redirect("/admin/coupons");
+   
+    res.json({
+      success:true
+    })
   } catch (error) {
     console.log(error);
   }

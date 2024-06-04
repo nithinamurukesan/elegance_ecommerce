@@ -34,7 +34,13 @@
                                     <li><a href="#"><img src="/assets/imgs/theme/flag-ru.png" alt="">Pусский</a></li>
                                 </ul>
                             </li> --}}
-                            <li><i class="fi-rs-user"></i><a href="/login">Log In / Sign Up</a></li>
+                            <li><i class="fi-rs-user"></i><a href="/login">
+                            {{#if userData}}
+                                {{userData.name}}
+                            {{else}}
+                                Log In / Sign Up
+                            {{/if}}
+                                </a></li>
                         </ul>
                     </div>
                 </div>
@@ -46,7 +52,14 @@
             <div class="header-wrap">
                 <div class="logo logo-width-1">
                     {{!-- <a href="/"><img src="/images/logo/Logo_CH.png" style=" width: 10px;" alt="logo"></a> --}}
-                    <h3>ELEGANCE</h3>
+                    <style>
+                        @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+                    </style>
+
+                    <a href="/" class="active"
+                        style="font-size: 24px; font-weight: bold; font-family: 'Roboto', sans-serif;">ELEGANCE</a>
+
+
                 </div>
                 <div class="header-right">
                     <div class="search-style-2">
@@ -72,13 +85,22 @@
                             <div class="header-action-icon-2">
                                 <a href="/wishlist?id={{userData._id}}">
                                     <img class="svgInject" alt="Evara" src="/assets/imgs/theme/icons/icon-heart.svg">
+                                    {{#if userData}}
                                     <span class="pro-count blue">{{userData.wishlist.length}}</span>
+                                    {{else}}
+                                    <span class="pro-count blue">0</span>
+                                    {{/if}}
                                 </a>
+
                             </div>
                             <div class="header-action-icon-2">
                                 <a class="mini-cart-icon" href="/cart?id={{userData._id}}">
                                     <img alt="Evara" src="/assets/imgs/theme/icons/icon-cart.svg">
+                                    {{#if userData}}
                                     <span class="pro-count blue">{{userData.cart.length}}</span>
+                                    {{else}}
+                                    <span class="pro-count blue">0</span>
+                                    {{/if}}
                                 </a>
                             </div>
                             {{#if userData}}
@@ -92,7 +114,7 @@
                                                 class="material-icons md-perm_identity"></i>Edit Profile</a>
                                         <a class="dropdown-item" href="#"><i
                                                 class="material-icons md-settings"></i>Account Settings</a>
-                                        <a class="dropdown-item" href="#"><i
+                                        <a class="dropdown-item" href="/wallet"><i
                                                 class="material-icons md-account_balance_wallet"></i>Wallet</a>
                                         <a class="dropdown-item" href="#"><i
                                                 class="material-icons md-receipt"></i>Billing</a>
@@ -389,7 +411,8 @@
                                         <li><a href="shop-compare.html">Shop – Compare</a></li>
                                     </ul> --}}
                                 </li>
-                                {{!-- <li class="position-static"><a href="#">Mega menu <i class="fi-rs-angle-down"></i></a>
+                                {{!-- <li class="position-static"><a href="#">Mega menu <i
+                                            class="fi-rs-angle-down"></i></a>
                                     <ul class="mega-menu">
                                         <li class="sub-mega-menu sub-mega-menu-width-22">
                                             <a class="menu-title" href="#">Women's Fashion</a>

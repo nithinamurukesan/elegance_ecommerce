@@ -48,10 +48,14 @@ const addToCart = async (req, res) => {
 
 
 const loadCart = async (req, res) => {
+
+  const user=req.session.user
+  const id = user._id    
+  const userData = await User.findById(id).lean();
   try {
-    const userData = req.session.user
+  
     const userId   = req.query.id
-    console.log(userId);
+
 
     const user = await User.findOne({ _id: userId }).populate('cart.product').lean()
     const cart = user.cart; // Get the 'cart' array from the user document

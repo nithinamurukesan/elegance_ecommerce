@@ -16,13 +16,13 @@ const verifyEmail = async(email)=>{
             secure: false,
             requireTLS: true,
             auth:{
-                user: 'nithinamurukesan@gmail.com',
-                pass: 'cqad uznx xual ostm'
+                user: process.env.USER_EMAIL,
+                pass: process.env.USER_PASSWORD
             }
         })
         
         const mailoptions = {
-                from:'nithinamurukesan@gmail.com',
+                from: process.env.USER_EMAIL,
                 to: email,
                 subject: "For verify mail",
                 text: otp

@@ -8,40 +8,41 @@ let email;
 
 /////////render forgot otp mail page
 
-const submitMailProfile= async(req,res)=>{
-    try {
+// const submitMailProfile= async(req,res)=>{
+//     try {
 
-        const mailError='Invalid User'
-        if (req.session.mailError) {
-            res.render('user/userResetPassword/mailSubmit',{mailError})
-            req.session.mailError=false
+//         const mailError='Invalid User'
+//         if (req.session.mailError) {
+//             res.render('user/userResetPassword/mailSubmit',{mailError})
+//             req.session.mailError=false
 
             
-        } else {
-            res.render('user/userResetPassword/mailSubmit')
+//         } else {
+//             res.render('user/userResetPassword/mailSubmit')
             
-        }
+//         }
         
         
-    } catch (error) {
-        console.log(error)
-    }
-}
+//     } catch (error) {
+//         console.log(error)
+//     }
+// }
 
 ///// submit forgot password request
 
 const submitMailPostProfile=async(req,res)=>{
     try {
-        email=req.body.email
-        const userData=await User.findOne({email:email}).lean()
+        const user=req.session.user;
+        const userMail=user.email
+        const userData=await User.findOne({email:userMail}).lean()
         console.log(userData)
         if(userData){
-            otp=await userHelper.verifyEmail(email)
+            otp=await userHelper.verifyEmail(userMail)
             console.log(otp)
             res.redirect('/profileOtp')
         }else{
             req.session.mailError=true
-            res.redirect('/changePassword')
+            res.redirect('/profileOtp')
         }
 
         
@@ -72,11 +73,17 @@ const forgotOtpSubmitProfile=async(req,res)=>{
     console.log("Stored OTP:", otp); // Debugging statement
 
     if (enteredOtp === otp) {
-        res.redirect('/profileResetPassword');
+        res.json({ success: true, redirectUrl: '/profileResetPassword' });
+        
     } else {
         req.session.otpErr = true;
-        console.log("Incorrect OTP. Redirecting to /otp"); // Debugging statement
-        res.redirect('/profileOtp');
+
+        otpError = 'incorrect otp';
+
+        // Send JSON response with error message
+        res.json({ error: otpError });
+        
+
     }
 }
 
@@ -91,11 +98,13 @@ const resetPasswordPageProfile=async(req,res)=>{
 }
 const resetPasswordProfile=async(req,res)=>{
     try {
+        const user=req.session.user;
+        const userMail=user.email
         const newPassword  = req.body.password
         const hashedPassword = await userHelper.hashPassword(newPassword)
         //hashedPassword = await userHelper.hashpassword(req.body.password);
 
-        await User.updateOne({ email: email }, { $set: { password: hashedPassword } });
+        await User.updateOne({ email: userMail }, { $set: { password: hashedPassword } });
         req.session.newPas = true;
         res.redirect('/login');
     } catch (error) {
@@ -105,7 +114,6 @@ const resetPasswordProfile=async(req,res)=>{
 }
 
 module.exports={
-    submitMailProfile,
     submitMailPostProfile,
     forgotOtppageProfile,
     forgotOtpSubmitProfile,

@@ -5,12 +5,14 @@ const Coupon  = require('../../model/coupon')
 const Product = require('../../model/productModel')
 const Razorpay = require('razorpay');
 const { log } = require('handlebars')
+const Category = require('../../model/categoryModel')
 
 
 const loadCheckout = async (req, res) => {
 
     const userData = req.session.user
     const userId   = userData._id
+    const user = await User.findOne({ _id: userId }).lean()
 
 
     const addressData = await Address.find({userId : userId}).lean()
@@ -19,7 +21,7 @@ const loadCheckout = async (req, res) => {
     const cart       = userDataa.cart
 
 
-    let subTotal = 0
+    let subTotal = 50
     cart.forEach((val)=>{
     val.total = val.product.price * val.quantity
     subTotal += val.total
@@ -30,9 +32,9 @@ const loadCheckout = async (req, res) => {
     const availableCoupons = await Coupon.find({ 
       expiryDate: { $gte: now },
       usedBy: { $nin: [userId] }
-    });
+    }).lean();
     
-        res.render('user/checkout/checkout', { userData, cart, addressData, subTotal, availableCoupons })    
+        res.render('user/checkout/checkout', { userData:user, cart, addressData, subTotal, availableCoupons })    
 }
 
 
@@ -145,8 +147,9 @@ const placeOrder = async(req, res) => {
 
 
        let saveOrder = async () => {
-
+        console.log(req.body)
         if(req.body.couponData){
+            console.log(req.body)
           const order = new Order({
             userId  : userId,
             product : productDet,
@@ -189,8 +192,14 @@ const placeOrder = async(req, res) => {
 
             await Product.updateOne(
                 { _id: productId },
-                { $set: { stock: updatedStock, isOnCart: false } }
+                { $set: { stock: updatedStock, isOnCart: false },
+                 $inc: { bestSelling:1} }
               );
+            
+                const populatedProd= await Product.findById(productId).populate("category").lean()
+                await Category.updateMany({ _id: populatedProd.category._id }, { $inc: { bestselling:1} });
+
+            
               
         })
 
@@ -219,14 +228,14 @@ const placeOrder = async(req, res) => {
             const amount = req.body.amount
 
             var instance = new Razorpay({ 
-                key_id: "rzp_test_6u4aUWyjD4kZvI", 
-                key_secret: "BHpzGbf03O8ttvTONBk2LokC"
+                key_id: process.env.RAZORPAY_ID   , 
+                key_secret: process.env.RAZORPAY_SECRET
              })
 
             const order = await instance.orders.create({
                 amount: amount * 100,
                 currency: 'INR',
-                receipt: 'mubashir',
+                receipt: 'Nithina',
             })
 
             saveOrder()
@@ -265,7 +274,6 @@ const placeOrder = async(req, res) => {
 
 
 
-
 const validateCoupon = async (req, res) => {
     try {
         const { couponVal, subTotal } = req.body;
@@ -274,6 +282,8 @@ const validateCoupon = async (req, res) => {
         if (!coupon) {
             res.json('invalid');
         } else if (coupon.expiryDate < new Date()) {
+            res.json('expired');
+        } else if (subTotal < coupon.minPurchase) {
             res.json('expired');
         } else {
             const couponId = coupon._id;
@@ -288,7 +298,10 @@ const validateCoupon = async (req, res) => {
                 await Coupon.updateOne({ _id: couponId }, { $push: { usedBy: userId } });
 
                 const discnt = Number(discount);
-                const discountAmt = (subTotal * discnt) / 100;
+                let discountAmt = (subTotal * discnt) / 100;
+                if (discountAmt > coupon.maxDiscount) {
+                    discountAmt = coupon.maxDiscount;
+                }
                 const newTotal = subTotal - discountAmt;
 
                 const user = User.findById(userId);
@@ -306,6 +319,77 @@ const validateCoupon = async (req, res) => {
     }
 };
 
+const applyCoupon = async (req, res) => {
+    try {
+        const { couponVal, subTotal } = req.body;
+        const coupon = await Coupon.findOne({ code: couponVal });
+        const userId = req.session.user._id;
+
+        if (!coupon) {
+            return res.json({ status: 'invalid' });
+        } else if (coupon.expiryDate < new Date()) {
+            return res.json({ status: 'expired' });
+        } else if (coupon.usedBy.includes(userId)) {
+            return res.json({ status: 'already_used' });
+        } else if (subTotal < coupon.minPurchase) {
+            return res.json({ status: 'min_purchase_not_met' });
+        } else {
+            // Calculate the discount amount and apply the maximum discount limit
+            let discountAmt = (subTotal * coupon.discount) / 100;
+            if (discountAmt > coupon.maxDiscount) {
+                discountAmt = coupon.maxDiscount;
+            }
+            const newTotal = subTotal - discountAmt;
+
+            // Add user ID to usedBy array
+            await Coupon.updateOne({ _id: coupon._id }, { $push: { usedBy: userId } });
+
+            return res.json({
+                discountAmt,
+                newTotal,
+                discount: coupon.discount,
+                status: 'applied'
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ status: 'error', error });
+    }
+};
+
+
+
+// const removeCoupon = async (req, res) => {
+//     try {
+//         const { couponVal, subTotal } = req.body;
+//         const coupon = await Coupon.findOne({ code: couponVal });
+//         const userId = req.session.user._id;
+
+//         if (!coupon) {
+//             return res.json({ status: 'invalid' });
+//         } else if (!coupon.usedBy.includes(userId)) {
+//             return res.json({ status: 'not_used' });
+//         } else {
+//             // Remove user ID from usedBy array
+//             await Coupon.updateOne({ _id: coupon._id }, { $pull: { usedBy: userId } });
+
+//             // Calculate the new total by adding back the discount amount correctly
+//             const discountAmt = 0;
+//             const newTotal = subTotal;
+
+//             return res.json({
+//                 discountAmt,
+//                 newTotal,
+//                 discount: coupon.discount,
+//                 status: 'removed'
+//             });
+//         }
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ status: 'error', error });
+//     }
+// };
+
 
 
 
@@ -314,6 +398,8 @@ const validateCoupon = async (req, res) => {
 module.exports = {
     loadCheckout,
     placeOrder,
-    validateCoupon,
+    // removeCoupon,
+    applyCoupon ,
     checkStock,
+    validateCoupon,
 }

@@ -15,7 +15,7 @@ const swal=require('sweetalert')
  require('dotenv').config()
 
  mongoose.set('strictQuery', false);
- mongoose.connect('mongodb://localhost:27017/Project_Ecommerce', { useNewUrlParser: true, useUnifiedTopology: true })
+ mongoose.connect(process.env.MONGODB, { useNewUrlParser: true, useUnifiedTopology: true })
  .then(() => {
    console.log('MongoDB connected');
  })
@@ -58,6 +58,14 @@ Handlebars.registerHelper('ifnoteq', function (a, b, options) {
   return options.inverse(this);
 });
 
+Handlebars.registerHelper('add', function (a, b) {
+  return a+b
+});
+
+Handlebars.registerHelper('sub', function (a, b) {
+  return a-b
+});
+
 
 Handlebars.registerHelper("for", function (from, to, incr, block) {
   let accum = "";
@@ -80,6 +88,88 @@ Handlebars.registerHelper('ifCond', function(v1, v2, options) {
 Handlebars.registerHelper('multiply', function(a, b) {
   return a * b;
 });
+Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
+  return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
+});
+
+
+Handlebars.registerHelper('ifeq', function (a, b, options) {
+  if (a == b) { return options.fn(this); }
+  return options.inverse(this);
+});
+
+
+  Handlebars.registerHelper('statuchecker',  function (value) {
+      let ct=0
+      let ct2=0
+      let returnct= value.product.forEach((elem)=>{
+          if(elem.isReturned)ct++
+      })
+      let returnct2= value.product.forEach((elem)=>{
+          if(elem.isCancelled)ct2++
+      })
+
+      let allCancelled = value.product.every(product => product.isCancelled);
+      let allReturned = value.product.every(product => product.isReturned);
+      // if(ct>0 && value.status!=="Returned"){
+      //    let change=   Order.findByIdAndUpdate(value._id, { $set: { status: 'Returned' } }, { new: true });
+      // }
+  
+      if (value.status === "Delivered") {
+          return new Handlebars.SafeString(`
+              <button id="returnOrder" data-order-id="${value._id}" class="btn btn-sm btn-primary">Return Entire Order</button>
+          `);
+      } else if (value.status == "Returned") {
+          return new Handlebars.SafeString('<span class="badge rounded-pill alert-info text-info">Order Returned</span>');
+      } else {
+          if (allCancelled || value.status === 'Cancelled') {
+              return new Handlebars.SafeString('<span class="badge rounded-pill alert-danger text-danger">Order Cancelled</span>');
+          } else if (ct>0 ) {
+              return new Handlebars.SafeString('<span class="badge rounded-pill alert-info text-info">Order Returned</span>');
+          } else {
+              return new Handlebars.SafeString(`
+                  <button id="cancelOrder" data-order-id="${value._id}" class="btn btn-sm btn-primary">Cancel Entire Order</button>
+              `);
+          }
+      }
+  });
+
+  Handlebars.registerHelper('singlestatuchecker', function (product, options) {
+    if (product.isReturned) {
+        return new Handlebars.SafeString('<span class="badge rounded-pill alert-info text-info">Returned</span>');
+    } else if (product.isCancelled) {
+        return new Handlebars.SafeString('<span class="badge rounded-pill alert-danger text-danger">Cancelled</span>');
+    } else {
+        return options.fn(this);
+    }
+});
+
+Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+  switch (operator) {
+      case '==':
+          return (v1 == v2) ? options.fn(this) : options.inverse(this);
+      case '===':
+          return (v1 === v2) ? options.fn(this) : options.inverse(this);
+      case '!=':
+          return (v1 != v2) ? options.fn(this) : options.inverse(this);
+      case '!==':
+          return (v1 !== v2) ? options.fn(this) : options.inverse(this);
+      case '<':
+          return (v1 < v2) ? options.fn(this) : options.inverse(this);
+      case '<=':
+          return (v1 <= v2) ? options.fn(this) : options.inverse(this);
+      case '>':
+          return (v1 > v2) ? options.fn(this) : options.inverse(this);
+      case '>=':
+          return (v1 >= v2) ? options.fn(this) : options.inverse(this);
+      case '&&':
+          return (v1 && v2) ? options.fn(this) : options.inverse(this);
+      case '||':
+          return (v1 || v2) ? options.fn(this) : options.inverse(this);
+      default:
+          return options.inverse(this);
+  }
+});
 
 
 // hbs.registerHelper("json", function (context) {
@@ -88,7 +178,7 @@ Handlebars.registerHelper('multiply', function(a, b) {
 
 
 app.use(session({
-  secret: 'secret',
+  secret: process.env.SECRETKEY,
   saveUninitialized: true,
    cookie: { maxAge: 600000000 },
   resave: false 
@@ -106,13 +196,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'public/uploads')));
 // app.use(multer({dest: 'uploads', storage: fileStorage, fileFilter: fileFilter}).single('image'))
 
-app.use('/', userRouter);
 app.use('/admin', adminRouter);
+app.use('/', userRouter);
 
 // catch 404 and forward to error handler
 
 app.use(function(req, res, next) {
-  res.status(404).render('404');
+  res.status(404).render('404',{layout:'404layout'});
 });
 
 
@@ -129,10 +219,25 @@ app.use(function(req, res, next) {
 
 
 
-app.use(function(err, req, res, next) {
-  res.status(500);
-  res.render('error', { error: err });
+// Catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  next(createError(404));
+});
+
+
+// Error handler middleware
+app.use((err, req, res, next) => {
+  
+   res.locals.message = err.message;
+   res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  res.status(err.status || 500);
+  if (err.status === 404) {
+      res.render('404', { layout: '404layout' });
+  } else {
+      res.render('error'); 
+  }
 });
  
 
-module.exports = app;
+app.listen(process.env.PORT)

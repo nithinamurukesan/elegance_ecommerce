@@ -76,10 +76,17 @@ const submitOtpPost = (req, res) => {
     let enteredOtp = req.body.otp
     
     if(enteredOtp === otp){
-        res.redirect('/reset_Password')
+
+        res.json({ success: true, redirectUrl: '/reset_password' });
+        
     }else{
         req.session.otpErr = true
-        res.redirect('/otp')
+
+        otpError = 'incorrect otp';
+
+        // Send JSON response with error message
+        res.json({ error: otpError });
+       
     }
    
 }

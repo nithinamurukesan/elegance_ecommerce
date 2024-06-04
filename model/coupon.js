@@ -22,13 +22,25 @@ const couponSchema = new mongoose.Schema({
 
   status: {
     type: Boolean,
-    default : true
+    default: true
   },
 
-  usedBy:[{
+  usedBy: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+
+  minPurchase: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+
+  maxDiscount: {
+    type: Number,
+    required: true,
+    min: 0
+  }
 
 });
 

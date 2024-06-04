@@ -1,39 +1,54 @@
-const express         = require('express');
-const router          = express.Router();
-const auth            = require('../middleware/userAuth')
-const userController  = require('../controller/user/userController')
-const forgetPassword  = require('../controller/user/forgetPassword')
-const profile         = require('../controller/user/profile')
-const cart            = require('../controller/user/cart')
-const checkout        = require('../controller/user/checkout')
-const orders          = require('../controller/user/orders')
-const category        = require('../controller/user/category')
-const wishlist        = require('../controller/user/wishlist');
-const resetProfile =require('../controller/user/resetProfilePassword')
+const express = require('express');
+const router = express.Router();
+const auth = require('../middleware/userAuth')
+const userController = require('../controller/user/userController')
+const forgetPassword = require('../controller/user/forgetPassword')
+const profile = require('../controller/user/profile')
+const cart = require('../controller/user/cart')
+const checkout = require('../controller/user/checkout')
+const orders = require('../controller/user/orders')
+const category = require('../controller/user/category')
+const wishlist = require('../controller/user/wishlist');
+const resetProfile = require('../controller/user/resetProfilePassword')
+const wallet=require('../controller/user/walletController')
+
+require('../middleware/googleAuth')
+const passport = require('passport')
 
 
-const { isLogin, isLogout, blockCheck : isBlocked , logedin } = auth
+
+
+
+const { isLogin, isLogout, blockCheck: isBlocked, logedin } = auth
+
+
+
+//google authentication
+
+router.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }))
+router.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), userController.googleCallback)
 
 
 
 
+router.get('/', userController.loadHome)
+router.post('/', userController.doLogin)
 
-router.get('/', userController.loadHome) 
-router.post('/', userController.doLogin) 
-
-router.get('/product', userController.getProduct)
-router.get('/productview', userController.ProductView)
-router.post('/products_filter', userController.productSearch)
-router.post('/sort_product_az', userController.sortProduct_az)
-router.post('/sort_product_price', userController.sortProductByPrice)
+router.get('/product',  userController.getProduct)
+router.post('/product', userController.getProductsPage);
+router.get('/productview',  userController.ProductView)
+router.post('/products_filter',  userController.productSearch)
+router.post('/sort_product_name',  userController.sortProductByName)
+router.post('/sort_product_price',  userController.sortProductByPrice)
 
 
 router.get('/category_fil', category.catFilter)
+router.post('/category_fil', category.catFilter)
 router.get('/category', category.categoryFilter)
 
 router.get('/login', isLogout, userController.userLogin)
 
-router.get('/logout',  userController.doLogout)
+router.get('/logout', userController.doLogout)
 router.get('/signup', isLogout, userController.usersignup)
 router.post('/signup', userController.doSignup)
 
@@ -46,15 +61,15 @@ router.get('/profile', logedin, isBlocked, profile.loadProfile)
 router.get('/adresses', logedin, isBlocked, profile.manageAdress)
 router.get('/add_new_adress', logedin, isBlocked, profile.addNewAddress)
 router.post('/add_new_adress', logedin, isBlocked, profile.addNewAddressPost)
-router.get('/edit_address/:id',logedin,isBlocked, profile.editAddress)
-router.post('/edit_address/:id',logedin,isBlocked, profile.editAddressPost)
+router.get('/edit_address/:id', logedin, isBlocked, profile.editAddress)
+router.post('/edit_address/:id', logedin, isBlocked, profile.editAddressPost)
 router.get('/edit_details', logedin, isBlocked, profile.editDetails)
 router.post('/update_details/:id', logedin, isBlocked, profile.updateDetails)
 router.get('/delete_address/:id', logedin, isBlocked, profile.deleteAddress)
 
 // forgot password
-router.get('/forget_passsword', isLogout,  forgetPassword.submitMail)
-router.post('/forget_password',  forgetPassword.submitMailPost)
+router.get('/forget_passsword', isLogout, forgetPassword.submitMail)
+router.post('/forget_password', forgetPassword.submitMailPost)
 
 
 router.get('/otp', isLogout, forgetPassword.submitOtp)
@@ -68,23 +83,23 @@ router.post('/reset_password', forgetPassword.resetPasswordPost)
 // router.get('/profileSubmit_otp', logedin, userController.getOtp)
 // router.post('/profileSubmit_otp', logedin, userController.submitOtp)
 // router.get('/profileResend_otp', logedin, userController.resendOtp)
-router.get('/changePassword' , logedin, resetProfile.submitMailProfile)
-router.post('/changePassword', logedin ,     resetProfile.submitMailPostProfile)
+router.get('/changePassword', logedin, resetProfile.submitMailPostProfile)
 router.get('/profileOtp', logedin, resetProfile.forgotOtppageProfile)
-router.post('/profileOtp', logedin ,   resetProfile.forgotOtpSubmitProfile)
+router.post('/profileOtp', logedin, resetProfile.forgotOtpSubmitProfile)
 router.get('/profileResetPassword', logedin, resetProfile.resetPasswordPageProfile)
-router.post('/profileResetPassword', logedin ,   resetProfile.resetPasswordProfile)
+router.post('/profileResetPassword', logedin, resetProfile.resetPasswordProfile)
+
 
 
 
 //cart
-router.get('/cart', logedin, isBlocked, cart.loadCart)  
-router.get('/add_to_cart', logedin, isBlocked, cart.addToCart) 
+router.get('/cart', logedin, isBlocked, cart.loadCart)
+router.get('/add_to_cart', logedin, isBlocked, cart.addToCart)
 router.get('/remove', isLogin, isBlocked, cart.removeCart)
 router.post('/cart_updation', logedin, isBlocked, cart.updateCart)
 
 //checkout
-router.get('/checkout',  logedin, isBlocked, checkout.loadCheckout)
+router.get('/checkout', logedin, isBlocked, checkout.loadCheckout)
 router.get('/check_stock', logedin, isBlocked, checkout.checkStock)
 router.post('/place_order', logedin, isBlocked, checkout.placeOrder)
 
@@ -104,9 +119,28 @@ router.get('/wishlist', logedin, isBlocked, wishlist.loadWishlist)
 router.get('/add_to_wishlist', logedin, isBlocked, wishlist.addToWishList)
 router.get('/remove_from_wishlist', logedin, isBlocked, wishlist.removeFromWishList)
 
-//checkout
+
 router.post('/validate_coupon', logedin, isBlocked, checkout.validateCoupon)
 
+router.post('/apply_coupon', logedin, isBlocked, checkout.applyCoupon);
+// router.post('/remove_coupon', logedin, isBlocked, checkout.removeCoupon);
+
+//wallet
+
+router.get('/wallet', logedin, isBlocked,wallet.walletpage)
+router.post('/addmoneytowallet', logedin, isBlocked,wallet.addMoneyToWallet)
+router.post('/verify_Payment', logedin, isBlocked,wallet.verifyPayment)
+
+
+router.put('/cancel-order/:id', orders.cancelOrder);
+
+// Return entire order
+router.put('/return-order/:id', orders.returnOrder);
+
+// Cancel one product in an order
+router.put('/cancel-one-product', orders.cancelOneProduct);
+
+router.put('/return-one-product', orders.returnOneProduct);
 
 
 
@@ -167,7 +201,7 @@ router.post('/validate_coupon', logedin, isBlocked, checkout.validateCoupon)
 // router.post("/api/payment/verify",(req,res)=>{
 
 //     let body=req.body.response.razorpay_order_id + "|" + req.body.response.razorpay_payment_id;
-   
+
 //      var crypto = require("crypto");
 //      var expectedSignature = crypto.createHmac('sha256','BHpzGbf03O8ttvTONBk2LokC')
 //       .update(body.toString())
@@ -179,7 +213,7 @@ router.post('/validate_coupon', logedin, isBlocked, checkout.validateCoupon)
 //       response={"signatureIsValid":"true"}
 //          res.send(response);
 //      });
-    
+
 
 
 

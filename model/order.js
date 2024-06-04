@@ -15,6 +15,8 @@ const orderSchema = new mongoose.Schema({
       quantity: { type: Number },
       image: { type: String },
       address: { type: Object },
+      isCancelled:{type:Boolean , default:false},
+      isReturned:{type:Boolean , default:false}
     },
   ],
 

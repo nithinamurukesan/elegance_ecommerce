@@ -41,7 +41,7 @@
                             <nav class="nav nav-pills flex-lg-column mb-4">
                                 <a class="nav-link " aria-current="page" href="/profile">General</a>
                                 <a class="nav-link active" href="/my_orders">Orders</a>
-                                <a class="nav-link" href="#">Track Your Order</a>
+                             <a class="nav-link" href="/wallet">Wallet</a>
                                 <a class="nav-link" href="/adresses">My Address</a>
                                 <a class="nav-link" href="#">Account details</a>
                                 <a class="nav-link" href="#">Newsletter</a>
@@ -58,28 +58,6 @@
                 </div>
             </div>
             <div class="card mb-4">
-                <header class="card-header">
-                    <div class="row gx-3">
-                        <div class="col-lg-4 col-md-6 me-auto">
-                            <input type="text" placeholder="Search..." class="form-control">
-                        </div>
-                        <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
-                                <option>Status</option>
-                                <option>Active</option>
-                                <option>Disabled</option>
-                                <option>Show all</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
-                                <option>Show 20</option>
-                                <option>Show 30</option>
-                                <option>Show 40</option>
-                            </select>
-                        </div>
-                    </div>
-                </header> <!-- card-header end// -->
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-hover">
@@ -98,7 +76,7 @@
                                 <tr>
                                     <td class="text-center">{{this.orderId}}</td>
                                     <td class="text-center">{{this.paymentMethod}}</td>
-                                    <td class="text-center">${{this.total}}</td>
+                                    <td class="text-center">₹{{this.total}}</td>
                                     <td class="text-center"><span class="badge rounded-pill alert-warning">{{this.status}}</span></td>
                                     <td class="text-center">{{this.date}}</td>
                                     <td class="text-center">
@@ -107,23 +85,20 @@
                                     </td>
                                 </tr>
                                {{/each}}
-
-
-
-
-
-
-
-
-
-
-
-
                             </tbody>
                         </table>
                     </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
+                    <div class="pagination-area mt-15 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start">
+                    {{#each pages}}
+                             <li class="page-item active"><a class="page-link" href="?page={{this}}">{{this}}</a></li>
+                    {{/each}}
+                </ul>
+            </nav>
+        </div>
 
         </section> <!-- content-main end// -->
                         </div> <!-- col.// -->
