@@ -7,6 +7,7 @@ const helper  = require('../../helpers/user.helper')
 const User    = require('../../model/userModel')
 const Product = require('../../model/productModel')
 
+
 const path = require('path');
 const easyinvoice = require('easyinvoice');
 const Handlebars = require('handlebars');
@@ -229,9 +230,9 @@ const orderDetails = async (req, res) => {
               userId:userId
           }
       ).lean()
-      console.log(address,"address")
+      
 
-      console.log("myOrderDetails:", myOrderDetails);
+    
       //console.log("orderedProDet:", orderedProDet);
       await myOrderDetails.product.forEach((product) => {
         if (product.isReturned) {
@@ -240,10 +241,11 @@ const orderDetails = async (req, res) => {
         if (product.isCancelled) ct2++
         offerprice+= product.price* product.quantity
     })
-    offerprice-=myOrderDetails.discountAmt
-      console.log(offerprice,"offerprice")
+    offerprice-=myOrderDetails.discountAmt  
 
-      res.render('user/order_Details', { offerprice,address,orderedProDet, myOrderDetails, userData });
+    const formattedDate = moment(myOrderDetails.date).format("MMMM D, YYYY");
+
+      res.render('user/order_Details', { offerprice,address,orderedProDet, myOrderDetails, userData,formattedDate });
   } catch (error) {
       console.error("Error fetching order details:", error.message);
       res.status(500).send("Internal Server Error");
@@ -337,14 +339,25 @@ const cancelOrder = async (req, res) => {
       }
 
       if (['wallet', 'razorpay'].includes(canceledOrder.paymentMethod)) {
-          for (const data of canceledOrder.product) {
+          //for (const data of canceledOrder) {
               //await Product.updateOne({ _id: data._id }, { $inc: { stock: data.quantity } });
+              console.log(canceledOrder.amountAfterDscnt)
+              let updatedwallet = canceledOrder.amountAfterDscnt -50
+             for (const data of canceledOrder.product) {
+                
+                if(data.isCancelled===true || data.isReturned === true){
+                    updatedwallet -= data.price * data.quantity
+                }
+             }
+             console.log(updatedwallet, "updated after review")
               await User.updateOne(
                   { _id: req.session.user._id },
-                  { $inc: { wallet: data.price * data.quantity } }
+                  { $inc: { wallet:  updatedwallet} }
               );
-              notCancelledAmt += data.price * data.quantity;
-          }
+              notCancelledAmt += canceledOrder.price * canceledOrder.quantity;
+         // }
+
+         
 
           await User.updateOne(
               { _id: req.session.user._id },
@@ -400,14 +413,21 @@ const returnOrder = async (req, res) => {
 
       }
       if (['wallet', 'razorpay'].includes(returnedOrder.paymentMethod)) {
-          for (const data of returnedOrder.product) {
+        //   for (const data of returnedOrder.product) {
               //await Product.updateOne({ _id: data._id }, { $inc: { stock: data.quantity } });
+              let updatedwallet = returnedOrder.amountAfterDscnt -50
+              for (const data of returnedOrder.product) {
+                
+                if(data.isCancelled===true || data.isReturned === true){
+                    updatedwallet -= data.price * data.quantity
+                }
+             }
               await User.updateOne(
                   { _id: req.session.user._id },
-                  { $inc: { wallet: data.price * data.quantity } }
+                  { $inc: { wallet: updatedwallet } }
               );
-              notCancelledAmt += data.price * data.quantity;
-          }
+              notCancelledAmt += returnedOrder.price * returnedOrder.quantity;
+        //   }
 
           await User.updateOne(
               { _id: req.session.user._id },
@@ -469,6 +489,15 @@ const cancelOneProduct = async (req, res) => {
           { _id: PRODID },
           { $inc: { stock: productQuantity } }
       );
+
+      await User.updateOne(
+        { _id: req.session.user._id },
+        {
+            $inc:{
+                wallet:productprice
+            }
+        }
+    );
       await User.updateOne(
           { _id: req.session.user._id },
           {
@@ -529,6 +558,14 @@ const returnOneProduct = async (req, res) => {
           { $inc: { stock: productQuantity } }
       );
       await User.updateOne(
+        { _id: req.session.user._id },
+        {
+            $inc:{
+                wallet:productprice
+            }
+        }
+    );
+      await User.updateOne(
           { _id: req.session.user._id },
           {
               $push: {
@@ -555,104 +592,203 @@ const returnOneProduct = async (req, res) => {
 
 
 
- const getInvoice = async (req, res) => {
-  try {
-    const orderId = req.query.id; 
+//  const getInvoice = async (req, res) => {
+//   try {
+//     const orderId = req.query.id; 
    
   
 
-    const order = await Orders.findById(orderId);
-    if (!order) {
-      return res.status(404).send({ message: 'Order not found' });
-    }
+//     const order = await Orders.findById(orderId);
+//     if (!order) {
+//       return res.status(404).send({ message: 'Order not found' });
+//     }
 
-    const { userId, address: addressId } = order;
+//     const { userId, address: addressId } = order;
     
-    const [user, address] = await Promise.all([
-      User.findById(userId),
-      Address.findById(addressId),
-    ]);
+//     const [user, address] = await Promise.all([
+//       User.findById(userId),
+//       Address.findById(addressId),
+//     ]);
 
 
-    const products = order.product.map((product) => ({
-      quantity: product.quantity.toString(),
-      description: product.name,
-      tax: product.tax,
-      price: product.price,
-    }));
-    console.log(products)
+//     const products = order.product.map((product) => ({
+//       quantity: product.quantity.toString(),
+//       description: product.name,
+//       tax: 0,
+//       price: product.price,
+//     }));
+//     console.log(products)
 
-    const date = moment(order.date).format('MMMM D, YYYY');
+//     const date = moment(order.date).format('MMMM D, YYYY');
     
     
 
 
-    if (!user || !address) {
-      return res.status(404).send({ message: 'User or address not found' });
-    }
+//     if (!user || !address) {
+//       return res.status(404).send({ message: 'User or address not found' });
+//     }
 
-    const filename = `invoice_${orderId}.pdf`;
+//     const filename = `invoice_${orderId}.pdf`;
 
-    const data = {
-      mode: "development",
-      currency: 'USD',
-      taxNotation: 'vat',
-      marginTop: 25,
-      marginRight: 25,
-      marginLeft: 25,
-      marginBottom: 25,
-      background: 'https://public.easyinvoice.cloud/img/watermark-draft.jpg',
-      sender: {
-        company: 'SHOPIFY',
-        address: 'Canyon',
-        zip: '600091',
-        city: 'Chennai',
-        country: 'India',
-      },
-      client: {
-        company: user.name,
-        address: address.adressLine1,
-        zip: address.pin,
-        city: address.city,
-        country: 'India',
-      },
+//     const data = {
+//       mode: "development",
+//       currency: 'USD',
+//       taxNotation: 'vat',
+//       marginTop: 25,
+//       marginRight: 25,
+//       marginLeft: 25,
+//       marginBottom: 25,
+//       background: 'https://public.easyinvoice.cloud/img/watermark-draft.jpg',
+//       sender: {
+//         company: 'SHOPIFY',
+//         address: 'Canyon',
+//         zip: '600091',
+//         city: 'Chennai',
+//         country: 'India',
+//       },
+//       client: {
+//         company: user.name,
+//         address: address.adressLine1,
+//         zip: address.pin,
+//         city: address.city,
+//         country: 'India',
+//       },
 
-      information: {
-        // Invoice number
-        number: "2021.0001",
-        // Invoice data
-        date: date,
-        // Invoice due date
-        // duedate: "31-12-2021"
-    },
+//       information: {
+//         // Invoice number
+//         number: "2021.0001",
+//         // Invoice data
+//         date: date,
+//         // Invoice due date
+//         // duedate: "31-12-2021"
+//     },
   
-      // invoiceNumber: '2023001',
-      // invoiceDate: date,
+//       // invoiceNumber: '2023001',
+//       // invoiceDate: date,
 
 
-      products: products
+//       products: products
      
-    };
+//     };
 
-    console.log(data)
+//     console.log(data)
 
-easyinvoice.createInvoice(data, function (result) {
+// easyinvoice.createInvoice(data, function (result) {
 
-  easyinvoice.createInvoice(data, function (result) {
-    const fileName = 'invoice.pdf'
-    const pdfBuffer = Buffer.from(result.pdf, 'base64');
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
-    res.send(pdfBuffer);
-  })
-  console.log('PDF base64 string: ');
-});
-} 
+//   easyinvoice.createInvoice(data, function (result) {
+//     const fileName = 'invoice.pdf'
+//     const pdfBuffer = Buffer.from(result.pdf, 'base64');
+//     res.setHeader('Content-Type', 'application/pdf');
+//     res.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
+//     res.send(pdfBuffer);
+//   })
+//   console.log('PDF base64 string: ');
+// });
+// } 
    
-   catch (error) {
-    res.sendStatus(500);
-  }
-};
+//    catch (error) {
+//     res.sendStatus(500);
+//   }
+// };
+
+const getInvoice = async (req, res) => {
+    try {
+      const orderId = req.query.id; 
+     
+    
+  
+      const order = await Orders.findById(orderId);
+      if (!order) {
+        return res.status(404).send({ message: 'Order not found' });
+      }
+  
+      const { userId, address: addressId } = order;
+      
+      const [user, address] = await Promise.all([
+        User.findById(userId),
+        Address.findById(addressId),
+      ]);
+  
+  
+      const products = order.product.map((product) => ({
+        quantity: product.quantity.toString(),
+        description: product.name,
+        tax: product.tax,
+        price: product.price,
+      }));
+      console.log(products)
+  
+      const date = moment(order.date).format('MMMM D, YYYY');
+      
+      
+  
+  
+      if (!user || !address) {
+        return res.status(404).send({ message: 'User or address not found' });
+      }
+  
+      const filename = `invoice_${orderId}.pdf`;
+  
+      const data = {
+        mode: "development",
+        currency: 'USD',
+        taxNotation: 'vat',
+        marginTop: 25,
+        marginRight: 25,
+        marginLeft: 25,
+        marginBottom: 25,
+        background: 'https://public.easyinvoice.cloud/img/watermark-draft.jpg',
+        sender: {
+          company: 'SHOPIFY',
+          address: 'Canyon',
+          zip: '600091',
+          city: 'Chennai',
+          country: 'India',
+        },
+        client: {
+          company: user.name,
+          address: address.adressLine1,
+          zip: address.pin,
+          city: address.city,
+          country: 'India',
+        },
+  
+        information: {
+          // Invoice number
+          number: "2021.0001",
+          // Invoice data
+          date: date,
+          // Invoice due date
+          // duedate: "31-12-2021"
+      },
+    
+        // invoiceNumber: '2023001',
+        // invoiceDate: date,
+  
+  
+        products: products
+       
+      };
+  
+      console.log(data)
+  
+  easyinvoice.createInvoice(data, function (result) {
+  
+    easyinvoice.createInvoice(data, function (result) {
+      const fileName = 'invoice.pdf'
+      const pdfBuffer = Buffer.from(result.pdf, 'base64');
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
+      res.send(pdfBuffer);
+    })
+    console.log('PDF base64 string: ');
+  });
+  } 
+     
+     catch (error) {
+      res.sendStatus(500);
+    }
+  };
 
 
 

@@ -128,7 +128,8 @@ const blockUser = async (req, res) => {
 
 const getCategory = async (req, res) => {
   try {
-    var page = 1
+    var page = 1;
+    
     if (req.query.page) {
       page = req.query.page
     }

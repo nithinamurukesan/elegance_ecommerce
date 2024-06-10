@@ -102,6 +102,8 @@ router.post('/cart_updation', logedin, isBlocked, cart.updateCart)
 router.get('/checkout', logedin, isBlocked, checkout.loadCheckout)
 router.get('/check_stock', logedin, isBlocked, checkout.checkStock)
 router.post('/place_order', logedin, isBlocked, checkout.placeOrder)
+router.post('/checkoutaddress', logedin, isBlocked, checkout.addNewAddressPost)
+
 
 //orders
 

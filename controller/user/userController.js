@@ -64,7 +64,7 @@ const getProduct = async (req, res) => {
             userData: user,
             loadCatData,
             currentFunction: 'getProductsPage',
-            layout:'productLayout'
+            // layout:'productLayout'
             
         });
     } catch (error) {

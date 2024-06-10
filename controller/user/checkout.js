@@ -193,7 +193,8 @@ const placeOrder = async(req, res) => {
             await Product.updateOne(
                 { _id: productId },
                 { $set: { stock: updatedStock, isOnCart: false },
-                 $inc: { bestSelling:1} }
+                 $inc: { 
+                    Selling:1} }
               );
             
                 const populatedProd= await Product.findById(productId).populate("category").lean()
@@ -391,7 +392,29 @@ const applyCoupon = async (req, res) => {
 // };
 
 
+const addNewAddressPost= async(req, res) => {
+    try {
+        const userData = req.session.user
+        const id       = userData._id
+        
+        const adress = new Address({
+            userId      : id,
+            name        : req.body.name,
+            mobile      : req.body.mobile,
+            adressLine1 : req.body.address1,
+            adressLine2 : req.body.address2,
+            city        : req.body.city,
+            state       : req.body.state, 
+            pin         : req.body.pin, 
+            is_default  : false,
+        })
 
+        const adressData = await adress.save()
+        res.redirect('/checkout')
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 
@@ -402,4 +425,5 @@ module.exports = {
     applyCoupon ,
     checkStock,
     validateCoupon,
+    addNewAddressPost
 }
