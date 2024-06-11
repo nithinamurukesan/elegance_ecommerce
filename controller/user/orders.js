@@ -103,8 +103,8 @@ const myOrders = async (req, res) => {
       })
 
   } catch (error) {
-      console.log(error);
-  }
+    console.log(error.message);
+    res.status(500).send(" Error");  }
 }
 
 
@@ -132,8 +132,8 @@ const filterOrders = async (req, res) => {
     res.json(formattedOrders)
 
   } catch (error) {
-    console.log(error);
-  }
+    console.log(error.message);
+    res.status(500).send(" Error");  }
 }
 
 
@@ -178,6 +178,7 @@ const orderDetails = async (req, res) => {
 
       // Retrieve order details including populated address
       const myOrderDetails = await Orders.findById(orderId).populate('address').lean();
+      console.log(myOrderDetails)
       // let hasReturnedItems = myOrderDetails.product.some(product => product.isReturned);
       // let allCancelled = myOrderDetails.product.every(product => product.isCancelled);
       // let allReturned = myOrderDetails.product.every(product => product.isReturned);
@@ -247,8 +248,8 @@ const orderDetails = async (req, res) => {
 
       res.render('user/order_Details', { offerprice,address,orderedProDet, myOrderDetails, userData,formattedDate });
   } catch (error) {
-      console.error("Error fetching order details:", error.message);
-      res.status(500).send("Internal Server Error");
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -260,8 +261,8 @@ const orderDetails = async (req, res) => {
       const userData = req.session.user
         res.render('user/order_sucess', {userData})
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
  }
 
 
@@ -378,8 +379,8 @@ const cancelOrder = async (req, res) => {
           message: 'Successfully cancelled Order'
       });
   } catch (error) {
-      console.log(error.message);
-      res.status(500).send('Internal Server Error');
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -449,8 +450,8 @@ const returnOrder = async (req, res) => {
 
       });
   } catch (error) {
-      console.log(error.message);
-      res.status(500).send('Internal Server Error');
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -516,8 +517,8 @@ const cancelOneProduct = async (req, res) => {
           message: 'Successfully removed product'
       });
   } catch (error) {
-      console.log(error.message);
-      res.status(500).send('Internal Server Error');
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 const returnOneProduct = async (req, res) => {
@@ -584,8 +585,8 @@ const returnOneProduct = async (req, res) => {
           message: 'Successfully removed product'
       });
   } catch (error) {
-      console.log(error.message);
-      res.status(500).send('Internal Server Error');
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 }
 
@@ -786,7 +787,8 @@ const getInvoice = async (req, res) => {
   } 
      
      catch (error) {
-      res.sendStatus(500);
+        console.log(error.message);
+        res.status(500).send(" Error");
     }
   };
 

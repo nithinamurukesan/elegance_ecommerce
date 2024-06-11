@@ -23,7 +23,8 @@ let email
             res.render('user/forgetPassword/mailSubmit')
         }
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
+    res.status(500).send(" Error");
     }
 }
 
@@ -46,8 +47,8 @@ let email
             res.redirect('/forget_passsword')
         }     
     } catch (error) {
-        console.log(error)
-    }    
+        console.log(error.message);
+        res.status(500).send(" Error");    }    
 }
 
 
@@ -64,8 +65,8 @@ const submitOtp = (req, res) => {
             res.render('user/forgetPassword/submitOtp')        
         }
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 }
 
 
@@ -99,8 +100,8 @@ const resetPassword = (req, res) => {
     try {
         res.render('user/forgetPassword/resetPassword')
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 }
 
 
@@ -116,8 +117,8 @@ const resetPasswordPost = async (req, res) => {
         req.session.newPas = true
         res.redirect('/login')
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 }
 
 

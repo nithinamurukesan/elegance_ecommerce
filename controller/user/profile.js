@@ -15,8 +15,8 @@ module.exports = {
     // const userDataObject = userData.toObject();
     res.render('user/about_me', {userData})
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 },
 
 
@@ -31,8 +31,8 @@ module.exports = {
         const userAddress = await Address.find({userId : id}).lean()
         res.render('user/manage_address', {userAddress, userData})
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 },
 
 
@@ -43,8 +43,8 @@ addNewAddress : (req, res) => {
     try {
         res.render('user/add_new_address')
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 },
 
 
@@ -71,8 +71,8 @@ addNewAddressPost: async(req, res) => {
         const adressData = await adress.save()
         res.redirect('/adresses')
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 },
 
 
@@ -87,8 +87,8 @@ editAddress : async (req, res) => {
 
         res.render('user/editAddress',{ address:addressObject })
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 },
 
 
@@ -114,8 +114,8 @@ editAddressPost : async (req, res) => {
         // const userAddresses = await Address.find({ userId: id }).lean();
         // res.render('user/editAddress')
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 },
 
 
@@ -128,8 +128,8 @@ editDetails: (req, res) => {
         const userData = req.session.user
         res.render('user/edit_user', {userData})
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 },
 
 
@@ -149,8 +149,8 @@ updateDetails: async (req, res) => {
         res.redirect('/profile')
         
     } catch (error) {
-        console.log(error); 
-    }   
+        console.log(error.message);
+        res.status(500).send(" Error");    }   
  },
 
 
@@ -163,8 +163,8 @@ updateDetails: async (req, res) => {
         await Address.findByIdAndDelete(id)
         res.redirect('/adresses')
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
  },
 
  

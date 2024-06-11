@@ -47,8 +47,8 @@ const submitMailPostProfile=async(req,res)=>{
 
         
     } catch (error) {
-        console.log(error)
-        
+        console.log(error.message);
+        res.status(500).send(" Error");        
     }
 }
 
@@ -63,8 +63,8 @@ const forgotOtppageProfile=async(req,res)=>{
             res.render('user/userResetPassword/submitOtp');
         }
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 }
 const forgotOtpSubmitProfile=async(req,res)=>{
     let enteredOtp = req.body.otp;
@@ -91,8 +91,8 @@ const resetPasswordPageProfile=async(req,res)=>{
     try {
         res.render('user/userResetPassword/resetPassword');
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 
 
 }
@@ -108,8 +108,8 @@ const resetPasswordProfile=async(req,res)=>{
         req.session.newPas = true;
         res.redirect('/login');
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");    }
 
 }
 

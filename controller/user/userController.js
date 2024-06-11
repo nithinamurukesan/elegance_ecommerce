@@ -297,8 +297,8 @@ const resendOtp =  async (req, res)=>{
         res.redirect('/get_otp')
         otp = await userHelper.verifyEmail(userEmail)
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");  }
 }
 
 
@@ -342,8 +342,8 @@ const doLogin = async(req, res)=>{
                 res.redirect('/login')
             }    
      } catch (error) {
-        console.log(error);
-     }
+        console.log(error.message);
+        res.status(500).send(" Error");     }
 }
 
 //User logout
@@ -358,7 +358,7 @@ const doLogout = async(req,res)=>{
 
     } catch (error) {
         console.log(error.message);
-    }
+        res.status(500).send(" Error");    }
  }
 
 
@@ -386,8 +386,8 @@ const doSignup = async(req, res)=>{
         }
 
     } catch (error) {
-        console.log(error);     
-    }   
+        console.log(error.message);
+        res.status(500).send(" Error");    }   
 }
 
 
@@ -403,8 +403,8 @@ const productSearch = async(req, res)=>{
             res.json(products);
           } catch (error) {
             console.log(error);
-            return res.status(500).send();
-          }
+            console.log(error.message);
+            res.status(500).send(" Error");          }
           
           
      }else{
@@ -415,8 +415,8 @@ const productSearch = async(req, res)=>{
             res.json(products);
           } catch (error) {
             console.log(error);
-            return res.status(500).send();
-          }
+            console.log(error.message);
+            res.status(500).send(" Error");          }
           
      }
     }
@@ -449,8 +449,8 @@ const productSearch = async(req, res)=>{
     
             res.json({ productData: products, pages, currentPage: page, sort });
         } catch (error) {
-            console.log(error);
-            res.status(500).json({ error: 'Internal server error' });
+            console.log(error.message);
+    res.status(500).send(" Error");
         }
     };
 
@@ -481,7 +481,8 @@ const productSearch = async(req, res)=>{
             res.json({ productData: products, pages, currentPage: page, sort });
         } catch (error) {
             console.log(error);
-            res.status(500).json({ error: 'Internal server error' });
+            console.log(error.message);
+            res.status(500).send(" Error");
         }
     };
 

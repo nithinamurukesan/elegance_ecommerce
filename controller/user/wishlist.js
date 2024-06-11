@@ -29,7 +29,8 @@ const loadWishlist = async (req, res) => {
 
     res.render('user/wishlist', { userData, userId, wishItem })
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 
 }
@@ -57,7 +58,8 @@ const loadWishlist = async (req, res) => {
     }
         
     } catch (error) {
-        console.log(error);
+      console.log(error.message);
+      res.status(500).send(" Error");
     }
  }
 
@@ -84,8 +86,8 @@ const loadWishlist = async (req, res) => {
       }
   
     } catch (error) {
-      console.log(error);
-    }
+      console.log(error.message);
+      res.status(500).send(" Error");    }
   }
   
  

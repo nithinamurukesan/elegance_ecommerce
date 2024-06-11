@@ -73,11 +73,11 @@
                         <div class="form-group col-lg-6">
                           {{!-- <input class="font-medium" id="copon" name="coupon" placeholder="Enter Your Coupon">
                           --}}
-                          <select id="copon" name="coupon" class="form-control font-medium">
-                            {{#each availableCoupons}}
+                          <input type="text" placeholder="couponcode" id="copon" name="coupon" class="form-control font-medium">
+                            {{!-- {{#each availableCoupons}}
                             <option value="{{this.code}}">{{this.code}}</option>
-                            {{/each}}
-                          </select>
+                            {{/each}} --}}
+                          
                         </div>
                         <div class="form-group col-lg-6">
                           <button onclick="validateCoupon()" type="button" class="btn  btn-sm"><i
@@ -210,7 +210,34 @@
             </div>
           </div>
         </div>
+
+         <br>
+
+                    <div class="border" style="padding: 10px; border-radius:5px;">
+              <details >
+              <summary>Available coupons</summary>
+              {{#if availableCoupons}}
+              {{#each availableCoupons}}
+                <div class="d-flex justify-content-between" >
+                    <h6 class="my-2">{{this.code}}</h6>
+                    <p>Get {{this.discount}}% discount</p>
+                </div>
+              {{/each}}
+              {{else}}
+              <h6 class="mb-3">No coupon available</h6>
+              {{/if}}
+            </details>
+            </div>
       </div>
+
+
+
+      </div>
+
+
+      
+
+     
 
 
     </div>

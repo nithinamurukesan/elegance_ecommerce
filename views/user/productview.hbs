@@ -116,9 +116,15 @@
             {{#if productExistInCart}}
                 <button onclick="window.location.href='/cart?id={{userData._id}}'" class="button button-add-to-cart">Go to cart</button>
             {{else}}
-                <span id="cart_btn">
-                    <button onclick="addToCartBtn('{{proData._id}}')" id="add_to_cart_btn" class="button button-add-to-cart">Add to cart</button>
-                </span>
+                {{#if userData}}
+                                    <span id="cart_btn">
+                                            <button onclick="addToCartBtn('{{proData._id}}')"  id="add_to_cart_btn" class="button button-add-to-cart">Add to cart</button>
+                                            </span>
+                                    {{else}}
+                                                                                                            <span id="cart_btn">
+                                            <button onclick="window.location.href='/login'"  id="add_to_cart_btn" class="button button-add-to-cart">Add to cart</button>
+                                            </span>
+                                    {{/if}}
             {{/if}}
         {{else}}
             <div onclick="outofStock()">

@@ -169,6 +169,7 @@
                                                                                     50</span>
                                                                             </dd>
                                                                         </dl>
+                                                                        {{#if myOrderDetails.coupon}}
                                                                         <dl class="dlist">
                                                                             <dt>Discount:</dt>
                                                                             <dd>
@@ -183,6 +184,16 @@
                                                                                     class="h5">₹{{myOrderDetails.amountAfterDscnt}}</b>
                                                                             </dd>
                                                                         </dl>
+                                                                        {{else}}
+                                                                        <dl class="dlist">
+                                                                            <dt>Grand Total:</dt>
+                                                                            <dd>
+                                                                                <b
+                                                                                    class="h5">₹{{add myOrderDetails.total 50}}</b>
+                                                                            </dd>
+                                                                        </dl>
+
+                                                                        {{/if}}
                                                                         {{!-- {{#ifCond myOrderDetails.status "!="
                                                                         "Cancelled"}}
                                                                         <button id="cancelOrder"

@@ -16,7 +16,8 @@ let walletpage =async (req,res)=>{
         
     } catch (error) {
         
-        console.log(error)
+        console.log(error.message);
+    res.status(500).send(" Error");
     }
 
 }
@@ -66,8 +67,8 @@ let addMoneyToWallet = async (req, res) => {
 
 
     } catch (error) {
-        console.log("Something went wrong", error);
-        res.status(500).send("Internal Server Error");
+        console.log(error.message);
+    res.status(500).send(" Error");
 
     }
 }

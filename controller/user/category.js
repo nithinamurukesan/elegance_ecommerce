@@ -25,8 +25,8 @@ const catFilter = async (req, res) => {
 
         res.json({ productData: products, pages, currentPage: page, catId });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.log(error.message);
+    res.status(500).send(" Error");
     }
 };
 
@@ -38,7 +38,8 @@ const categoryFilter = async(req, res)=>{
         const productData = await Product.find({ category: id, is_blocked:false }).lean()
         res.render( 'user/category', {productData, catData})
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
+        res.status(500).send(" Error");
     }   
 }
 
@@ -55,7 +56,8 @@ const loadWomCat = async(req, res)=>{
             res.render('user/women_cat',{womenData})
         }
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
+    res.status(500).send(" Error");
     }   
 }
 

@@ -171,7 +171,8 @@ const addCategory = (req, res) => {
       res.render("admin/add_category",{layout:'adminlayout'});
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -197,7 +198,10 @@ const addNewCategory = async (req, res) => {
       req.session.catExist = true;
       res.redirect("/admin/add_category");
     }
-  } catch (error) {}
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send(" Error");
+  }
 };
 
 /// To edit category ///
@@ -215,7 +219,8 @@ const editCategory = async (req, res) => {
       res.render("admin/edit_category", { catData, layout:'adminlayout' });
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -294,7 +299,10 @@ const updateCategory = async (req, res) => {
       // req.session.catExist = true
       res.redirect("/admin/category");
     }
-  } catch (error) { }
+  } catch (error) { 
+    console.log(error.message);
+    res.status(500).send(" Error");
+  }
 };
 /// To delete category ///
 
@@ -325,7 +333,8 @@ const deleteCategory = async (req, res) => {
 
 
   } catch (error) {
-      console.log(error)
+    console.log(error.message);
+    res.status(500).send(" Error");
 
   }
 }
@@ -369,7 +378,8 @@ const getProduct = async (req, res) => {
 
     res.render("admin/products", { productData,pages , currentPage: page, layout:'adminlayout' });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -431,7 +441,8 @@ const getOrders = async (req, res) => {
       layout:'adminlayout'
     });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -462,7 +473,8 @@ const addNewProduct = async (req, res) => {
     req.session.productSave = true;
     res.redirect("/admin/new_product");
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -477,7 +489,8 @@ const editProduct = async (req, res) => {
 
     res.render("admin/edit_product", { proData, catogories, layout:'adminlayout' })
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -518,7 +531,8 @@ const updateProduct = async (req, res) => {
     // req.session.productSave = true
     res.redirect("/admin/product");
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -585,7 +599,8 @@ const loadCoupon = async (req, res) => {
 
     res.render("admin/coupon", { couponData,pages , currentPage: page ,layout: 'adminlayout' });
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 const addCoupon = (req, res) => {
@@ -603,7 +618,8 @@ const addCoupon = (req, res) => {
       res.render("admin/add_coupon",{layout:'adminlayout'});
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -648,7 +664,8 @@ const deleteCoupon = async (req, res) => {
       success:true
     })
   } catch (error) {
-    console.log(error);
+    console.log(error);console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -689,7 +706,8 @@ const changeOrderStatus = async (req, res) => {
     );
     res.redirect("/admin/orders");
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 
@@ -718,7 +736,8 @@ const loadBanner = async (req, res) => {
     const bannerData = await Banner.find()
     res.render('admin/banners' , {bannerData, layout:'adminlayout'})
   } catch (error) {
-    console.log(error)
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 }
 
@@ -727,7 +746,8 @@ const addBanner =  (req, res) => {
    
     res.render('admin/add_banner', {bannerData, layout:'adminlayout'})
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 }
 
@@ -745,7 +765,8 @@ const addBannerPost = async (req, res) => {
 
     await banner.save()
   } catch (error) { 
-    console.log(error)
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 }
 
@@ -759,7 +780,8 @@ const deleteBanner = async (req, res) => {
 
     res.redirect("/admin/banners");
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 };
 

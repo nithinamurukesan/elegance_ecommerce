@@ -269,7 +269,8 @@ const placeOrder = async(req, res) => {
 
        
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
+    res.status(500).send(" Error");
     }
 }
 
@@ -316,7 +317,8 @@ const validateCoupon = async (req, res) => {
             }
         }
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
+        res.status(500).send(" Error");
     }
 };
 
@@ -353,8 +355,8 @@ const applyCoupon = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ status: 'error', error });
+        console.log(error.message);
+    res.status(500).send(" Error");
     }
 };
 
@@ -412,7 +414,8 @@ const addNewAddressPost= async(req, res) => {
         const adressData = await adress.save()
         res.redirect('/checkout')
     } catch (error) {
-        console.log(error);
+        console.log(error.message);
+    res.status(500).send(" Error");
     }
 }
 

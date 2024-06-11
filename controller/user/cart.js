@@ -97,7 +97,8 @@ const removeCart = async (req, res) => {
 
   res.json('item removed')
  } catch (error) {
-  console.log(error);
+  console.log(error.message);
+    res.status(500).send(" Error");
  }
 }
 
@@ -116,7 +117,8 @@ const updateCart = async (req, res)=>{
     res.json('from backend ,cartUpdation json')
 
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send(" Error");
   }
 }
 
