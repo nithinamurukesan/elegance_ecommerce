@@ -314,6 +314,7 @@ const cancelOrder = async (req, res) => {
 
       const ID = new mongoose.Types.ObjectId(id);
       let notCancelledAmt = 0;
+      let updatedwallet=0;
 
       let canceledOrder = await Orders.findOne({ _id: ID });
 
@@ -343,7 +344,15 @@ const cancelOrder = async (req, res) => {
           //for (const data of canceledOrder) {
               //await Product.updateOne({ _id: data._id }, { $inc: { stock: data.quantity } });
               console.log(canceledOrder.amountAfterDscnt)
-              let updatedwallet = canceledOrder.amountAfterDscnt -50
+              if(canceledOrder.couponUsed){
+                 updatedwallet = canceledOrder.amountAfterDscnt 
+
+              }
+              else{
+                 updatedwallet = canceledOrder.total
+              }
+              
+              notCancelledAmt = updatedwallet 
              for (const data of canceledOrder.product) {
                 
                 if(data.isCancelled===true || data.isReturned === true){
@@ -355,7 +364,7 @@ const cancelOrder = async (req, res) => {
                   { _id: req.session.user._id },
                   { $inc: { wallet:  updatedwallet} }
               );
-              notCancelledAmt += canceledOrder.price * canceledOrder.quantity;
+            //   notCancelledAmt += canceledOrder.price * canceledOrder.quantity;
          // }
 
          
@@ -393,6 +402,7 @@ const returnOrder = async (req, res) => {
       }
       const ID = new mongoose.Types.ObjectId(id);
       let notCancelledAmt = 0;
+      let updatedwallet=0;
 
       let returnedOrder = await Orders.findOne({ _id: ID }).lean();
       console.log(returnedOrder, "returnedOrder")
@@ -416,7 +426,15 @@ const returnOrder = async (req, res) => {
       if (['wallet', 'razorpay'].includes(returnedOrder.paymentMethod)) {
         //   for (const data of returnedOrder.product) {
               //await Product.updateOne({ _id: data._id }, { $inc: { stock: data.quantity } });
-              let updatedwallet = returnedOrder.amountAfterDscnt -50
+              if(returnedOrder.couponUsed){
+                updatedwallet = returnedOrder.amountAfterDscnt 
+
+             }
+             else{
+                updatedwallet = returnedOrder.total
+             }
+             
+             notCancelledAmt = updatedwallet 
               for (const data of returnedOrder.product) {
                 
                 if(data.isCancelled===true || data.isReturned === true){
@@ -427,8 +445,7 @@ const returnOrder = async (req, res) => {
                   { _id: req.session.user._id },
                   { $inc: { wallet: updatedwallet } }
               );
-              notCancelledAmt += returnedOrder.price * returnedOrder.quantity;
-        //   }
+              
 
           await User.updateOne(
               { _id: req.session.user._id },
