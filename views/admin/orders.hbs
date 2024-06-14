@@ -267,9 +267,9 @@
         </div> <!-- card end// -->
         <div class="pagination-area mt-15 mb-50">
             <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-start">
+                <ul class="pagination justify-content-start ">
                     {{#each pages}}
-                    <li class="page-item active"><a class="page-link" href="?page={{this}}">{{this}}</a></li>
+                    <li class="page-item {{#ifEquals this ../currentPage}}active{{/ifEquals}} "><a class="page-link " href="?page={{this}}">{{this}}</a></li>
                     {{/each}}
                 </ul>
             </nav>

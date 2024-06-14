@@ -408,7 +408,7 @@ const newProduct = async (req, res) => {
 
 const getOrders = async (req, res) => {
   try {
-    const PAGE_SIZE = 5;
+    const PAGE_SIZE = 6;
     const page = parseInt(req.query.page) || 1;
     const skip = (page - 1) * PAGE_SIZE;
 

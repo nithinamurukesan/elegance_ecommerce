@@ -129,19 +129,22 @@ input:focus::-moz-placeholder {
 
 a {
   color: #088178;
+  /* color: #DECAF2 !important; */
   /* color: #dd1010 !important; */
 
 }
 
 a:hover {
   color: #046963;
+  /* color: #DECAF2 !important; */
+
   /* color: #dd1010 !important; */
 
 }
 
 /*--- Common Classes---------------------*/
 ::-moz-selection {
-  /* background: #088178; */
+  background: #088178;
 
   /* WebKit/Blink Browsers */
   color: #fff;
@@ -149,12 +152,16 @@ a:hover {
 ::selection {
   background: #088178;
   /* background: #dd1010; */
+  /* background: #DECAF2 !important; */
+  ;
   /* WebKit/Blink Browsers */
   color: #fff;
 }
 
 ::-moz-selection {
   background: #088178;
+  /* background: #DECAF2 !important; */
+
   /* Gecko Browsers */
   color: #fff;
 }
@@ -329,7 +336,7 @@ input[type=number]:focus,
 }
 
 .bg-brand {
-  background-color: #088178 !important;
+  background-color: #DECAF2 !important;
 }
 
 .bg-primary {

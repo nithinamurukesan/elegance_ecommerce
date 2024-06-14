@@ -6,6 +6,8 @@ const Product = require('../../model/productModel')
 const Razorpay = require('razorpay');
 const { log } = require('handlebars')
 const Category = require('../../model/categoryModel')
+const moment  = require('moment')
+const coupon = require('../../model/coupon')
 
 
 const loadCheckout = async (req, res) => {
@@ -27,14 +29,20 @@ const loadCheckout = async (req, res) => {
     subTotal += val.total
     })
 
+   
+
 
     const now = new Date();
     const availableCoupons = await Coupon.find({ 
       expiryDate: { $gte: now },
       usedBy: { $nin: [userId] }
     }).lean();
+
     
-        res.render('user/checkout/checkout', { userData:user, cart, addressData, subTotal, availableCoupons })    
+
+    
+    
+        res.render('user/checkout/checkout', { userData:user, cart, addressData, subTotal, availableCoupons,})    
 }
 
 
@@ -149,6 +157,7 @@ const placeOrder = async(req, res) => {
        let saveOrder = async () => {
         console.log(req.body)
         if(req.body.couponData){
+
             console.log(req.body)
           const order = new Order({
             userId  : userId,
@@ -160,7 +169,12 @@ const placeOrder = async(req, res) => {
             discountAmt      : req.body.couponData.discountAmt,
             amountAfterDscnt : req.body.couponData.newTotal,
             coupon           : req.body.couponName,
+            couponUsed       : true,
+
         })
+
+        await Coupon.updateOne({ code : req.body.couponName}, { $push: { usedBy: userId } });
+
 
         const ordered = await order.save()
 
@@ -286,7 +300,7 @@ const validateCoupon = async (req, res) => {
         } else if (coupon.expiryDate < new Date()) {
             res.json('expired');
         } else if (subTotal < coupon.minPurchase) {
-            res.json('expired');
+            res.json('Minimum Amount Required');
         } else {
             const couponId = coupon._id;
             const discount = coupon.discount;
@@ -297,7 +311,6 @@ const validateCoupon = async (req, res) => {
             if (isCpnAlredyUsed) {
                 res.json('already used');
             } else {
-                await Coupon.updateOne({ _id: couponId }, { $push: { usedBy: userId } });
 
                 const discnt = Number(discount);
                 let discountAmt = (subTotal * discnt) / 100;
@@ -362,36 +375,7 @@ const applyCoupon = async (req, res) => {
 
 
 
-// const removeCoupon = async (req, res) => {
-//     try {
-//         const { couponVal, subTotal } = req.body;
-//         const coupon = await Coupon.findOne({ code: couponVal });
-//         const userId = req.session.user._id;
 
-//         if (!coupon) {
-//             return res.json({ status: 'invalid' });
-//         } else if (!coupon.usedBy.includes(userId)) {
-//             return res.json({ status: 'not_used' });
-//         } else {
-//             // Remove user ID from usedBy array
-//             await Coupon.updateOne({ _id: coupon._id }, { $pull: { usedBy: userId } });
-
-//             // Calculate the new total by adding back the discount amount correctly
-//             const discountAmt = 0;
-//             const newTotal = subTotal;
-
-//             return res.json({
-//                 discountAmt,
-//                 newTotal,
-//                 discount: coupon.discount,
-//                 status: 'removed'
-//             });
-//         }
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({ status: 'error', error });
-//     }
-// };
 
 
 const addNewAddressPost= async(req, res) => {

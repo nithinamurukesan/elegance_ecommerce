@@ -1,13 +1,15 @@
 <main class="main">
   <div class="page-header breadcrumb-wrap">
-    <div class="container">
-      <div class="breadcrumb">
-        <a href="index.html" rel="nofollow">Home</a>
-        <span></span> Shop
-        <span></span> Checkout
-      </div>
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                
+                <span><a href="/product">Shop</a></span>
+                <span><a href="/about">About</a></span>
+
+            </div>
+        </div>
     </div>
-  </div>
   <section class="mt-50 mb-50">
     <div class="container">
       <div class="row">
@@ -71,13 +73,54 @@
                     <form action="#" target="_blank">
                       <div class="form-row row justify-content-center">
                         <div class="form-group col-lg-6">
-                          {{!-- <input class="font-medium" id="copon" name="coupon" placeholder="Enter Your Coupon">
-                          --}}
-                          <input type="text" placeholder="couponcode" id="copon" name="coupon" class="form-control font-medium">
-                            {{!-- {{#each availableCoupons}}
-                            <option value="{{this.code}}">{{this.code}}</option>
-                            {{/each}} --}}
-                          
+
+                          <input class="font-medium" id="copon" name="coupon" placeholder="Enter Your Coupon">
+
+
+                          {{!-- <input type="text" placeholder="couponcode" id="copon" name="coupon"
+                            class="form-control font-medium"> --}}
+                          <br>
+                          <br>
+                          {{#if availableCoupons}}
+                          {{#each availableCoupons}}
+
+                          <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <div>
+                              <h6 class="my-2">{{this.code}}</h6>
+
+                            </div>
+                            <div class="dropdown">
+                              <button class="btn btn btn-fill-out dropdown-toggle" type="button"
+                                id="dropdownMenuButton{{@index}}" data-bs-toggle="dropdown" aria-expanded="false">
+                                Details
+                              </button>
+
+                              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton{{@index}}">
+                                <li>
+                                  <p class="dropdown-item">Discount:Get {{this.discount}}% Discount</p>
+                                </li>
+                                <li>
+                                  <p class="dropdown-item">Expiry Date: {{formatDate this.expiryDate }}</p>
+
+                                </li>
+
+                                <li>
+                                  <p class="dropdown-item">Minimum Purchase: {{this.minPurchase}}</p>
+                                </li>
+                                <li>
+                                  <p class="dropdown-item">Maximum Discount: {{this.maxDiscount}}</p>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                          {{/each}}
+                          {{else}}
+                          <h6 class="mb-3">No coupon available</h6>
+                          {{/if}}
+
+
+
                         </div>
                         <div class="form-group col-lg-6">
                           <button onclick="validateCoupon()" type="button" class="btn  btn-sm"><i
@@ -104,19 +147,19 @@
               <div class="payment_option">
                 <div class="custome-radio">
                   <input class="form-check-input" required="" type="radio" name="payment_option" id="cash-on-delivery"
-                    checked="" value="cash-on-delivery">
+                    value="cash-on-delivery">
                   <label class="form-check-label" for="cash-on-delivery" data-bs-toggle="collapse"
                     data-target="#bankTranfer" aria-controls="bankTranfer">Cash On Delivery</label>
                 </div>
                 <div class="custome-radio">
                   <input class="form-check-input" required="" type="radio" name="payment_option" value="razorpay"
-                    id="razorpay" checked="">
+                    id="razorpay">
                   <label class="form-check-label" for="razorpay" data-bs-toggle="collapse" data-target="#checkPayment"
                     aria-controls="checkPayment"> Razor Pay</label>
                 </div>
                 <div class="custome-radio">
                   <input class="form-check-input" required="" type="radio" name="payment_option" value="wallet"
-                    id="wallet" checked="">
+                    id="wallet">
                   <label class="form-check-label" for="wallet" data-bs-toggle="collapse" data-target="#paypal"
                     aria-controls="paypal"> Wallet</label>
                 </div>
@@ -211,33 +254,18 @@
           </div>
         </div>
 
-         <br>
-
-                    <div class="border" style="padding: 10px; border-radius:5px;">
-              <details >
-              <summary>Available coupons</summary>
-              {{#if availableCoupons}}
-              {{#each availableCoupons}}
-                <div class="d-flex justify-content-between" >
-                    <h6 class="my-2">{{this.code}}</h6>
-                    <p>Get {{this.discount}}% discount</p>
-                </div>
-              {{/each}}
-              {{else}}
-              <h6 class="mb-3">No coupon available</h6>
-              {{/if}}
-            </details>
-            </div>
-      </div>
-
 
 
       </div>
 
 
-      
 
-     
+    </div>
+
+
+
+
+
 
 
     </div>
@@ -301,10 +329,10 @@
           icon: 'error',
 
         })
-      }else{
-         Cod()
+      } else {
+        Cod()
       }
-     
+
     } else if (paymentMethod === 'razorpay') {
       online()
     } else if (paymentMethod === 'wallet') {

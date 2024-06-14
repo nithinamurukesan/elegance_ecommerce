@@ -42,6 +42,7 @@ router.post('/sort_product_name',  userController.sortProductByName)
 router.post('/sort_product_price',  userController.sortProductByPrice)
 
 
+
 router.get('/category_fil', category.catFilter)
 router.post('/category_fil', category.catFilter)
 router.get('/category', category.categoryFilter)
@@ -51,6 +52,12 @@ router.get('/login', isLogout, userController.userLogin)
 router.get('/logout', userController.doLogout)
 router.get('/signup', isLogout, userController.usersignup)
 router.post('/signup', userController.doSignup)
+
+//about page
+router.get('/about', userController.aboutpage )
+
+//contact page
+router.get('/contact', userController.contactpage )
 
 router.get('/get_otp', isLogout, userController.getOtp)
 router.post('/submit_otp', userController.submitOtp)

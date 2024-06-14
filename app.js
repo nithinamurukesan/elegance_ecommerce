@@ -12,6 +12,7 @@ const exphbs = require('express-handlebars')
 const nocache = require('nocache')
 const multer = require('multer')
 const swal=require('sweetalert')
+const moment=require('moment')
  require('dotenv').config()
 
  mongoose.set('strictQuery', false);
@@ -171,6 +172,13 @@ Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
   }
 });
 
+
+Handlebars.registerHelper('formatDate', function (isoDate) {
+  const monthYear = moment(isoDate).format('DD-MM-YYYY HH:mm:ss');
+
+
+  return `${monthYear}`;
+});
 
 // hbs.registerHelper("json", function (context) {
 //   return JSON.stringify(context)

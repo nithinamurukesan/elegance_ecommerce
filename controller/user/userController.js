@@ -214,8 +214,9 @@ const usersignup = (req, res)=>{
     try {
         res.render('user/signup')
     } catch (error) {
-        console.log(error);
-    }
+        console.log(error.message);
+        res.status(500).send(" Error");
+      }
 }
 
 //google authentication
@@ -487,6 +488,24 @@ const productSearch = async(req, res)=>{
     };
 
 
+    const aboutpage = (req, res)=>{
+        try {
+            res.render('user/about')
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const contactpage = (req, res)=>{
+        try {
+            res.render('user/contact')
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+
+
 module.exports = {
     doLogout, 
     getProduct, 
@@ -504,4 +523,6 @@ module.exports = {
     sortProductByName,
     sortProductByPrice,
     googleCallback,
+    aboutpage,
+    contactpage
 }

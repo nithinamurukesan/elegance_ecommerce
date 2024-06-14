@@ -1,12 +1,12 @@
-
-
-
 <main class="main">
     <div class="page-header breadcrumb-wrap">
         <div class="container">
             <div class="breadcrumb">
-                <a href="index.html" rel="nofollow">Home</a>
-                <span></span> Shop
+                <a href="/" rel="nofollow">Home</a>
+                
+                <span><a href="/product">Shop</a></span>
+                <span><a href="/about">About</a></span>
+
             </div>
         </div>
     </div>
@@ -20,7 +20,7 @@
                         </div>
                         <div class="sort-by-product-area">
                             <div class="sort-by-cover mr-10">
-                                <div class="sort-by-product-wrap">
+                                {{!-- <div class="sort-by-product-wrap">
                                     <div class="sort-by">
                                         <span><i class="fi-rs-apps"></i>Show:</span>
                                     </div>
@@ -36,18 +36,18 @@
                                         <li><a href="#">200</a></li>
                                         <li><a href="#">All</a></li>
                                     </ul>
-                                </div>
+                                </div> --}}
                             </div>
-                            {{!-- <div class="sort-by-cover">
+                            <div class="sort-by-cover">
                                 <div class="sort-by-product-wrap">
-                                    <div class="sort-by">
+                                    {{!-- <div class="sort-by">
                                         <span><i class="fi-rs-apps-sort"></i>Sort by:</span>
                                     </div>
                                     <div class="sort-by-dropdown-wrap">
                                         <span> Featured <i class="fi-rs-angle-small-down"></i></span>
-                                    </div>
+                                    </div> --}}
                                 </div>
-                                <div class="sort-by-dropdown">
+                                {{!-- <div class="sort-by-dropdown">
                                     <ul>
                                         <li><a class="active" href="#">Featured</a></li>
                                         <li><a href="/shop_lowToHigh">Price: Low to High</a></li>
@@ -55,8 +55,8 @@
                                         <li><a href="#">Release Date</a></li>
                                         <li><a href="#">Avg. Rating</a></li>
                                     </ul>
-                                </div>
-                            </div> --}}
+                                </div> --}}
+                            </div>
                         </div>
                     </div>
                     <span id="pro_container">
@@ -74,16 +74,16 @@
                                             </a>
                                         </div>
                                         <div class="product-action-1">
-                                            <a aria-label="Quick view" class="action-btn hover-up"
+                                            {{!-- <a aria-label="Quick view" class="action-btn hover-up"
                                                 data-bs-toggle="modal" data-bs-target="#quickViewModal">
                                                 <i class="fi-rs-search"></i></a>
                                             <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                                 href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                             <a aria-label="Compare" class="action-btn hover-up"
-                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                href="shop-compare.html"><i class="fi-rs-shuffle"></i></a> --}}
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
-                                            <span class="hot">Hot</span>
+                                            {{!-- <span class="hot">Hot</span> --}}
                                         </div>
                                     </div>
                                     <div class="product-content-wrap">
@@ -133,27 +133,29 @@
                         </div>
                     </span>
                     <!--pagination-->
-<div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
-    <nav aria-label="Page navigation example">
-        {{!-- <ul class="pagination justify-content-start" id="paginationList">
-            {{#each pages}}
-            <li class="page-item {{#ifEquals this ../currentPage}}active{{/ifEquals}}">
-                <a class="page-link" href="javascript:{{../currentFunction}}('{{../catId}}', {{this}});">{{this}}</a>
-            </li>
-            {{/each}}
-        </ul> --}}
-        <!-- Pagination links -->
-<ul class="pagination justify-content-start" id="paginationList">
-    {{#each pages}}
-    <li class="page-item {{#ifEquals this ../currentPage}}active{{/ifEquals}}">
-        <!-- Pass the sort parameter to the currentFunction -->
-        <a class="page-link" href="javascript:{{../currentFunction}}('{{../catId}}', {{this}}, '{{../currentSort}}');">{{this}}</a>
-    </li>
-    {{/each}}
-</ul>
+                    <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                        <nav aria-label="Page navigation example">
+                            {{!-- <ul class="pagination justify-content-start" id="paginationList">
+                                {{#each pages}}
+                                <li class="page-item {{#ifEquals this ../currentPage}}active{{/ifEquals}}">
+                                    <a class="page-link"
+                                        href="javascript:{{../currentFunction}}('{{../catId}}', {{this}});">{{this}}</a>
+                                </li>
+                                {{/each}}
+                            </ul> --}}
+                            <!-- Pagination links -->
+                            <ul class="pagination justify-content-start" id="paginationList">
+                                {{#each pages}}
+                                <li class="page-item {{#ifEquals this ../currentPage}}active{{/ifEquals}}">
+                                    <!-- Pass the sort parameter to the currentFunction -->
+                                    <a class="page-link"
+                                        href="javascript:{{../currentFunction}}('{{../catId}}', {{this}}, '{{../currentSort}}');">{{this}}</a>
+                                </li>
+                                {{/each}}
+                            </ul>
 
-    </nav>
-</div>
+                        </nav>
+                    </div>
 
 
 
@@ -163,12 +165,12 @@
                     <div class="widget-category mb-30">
                         <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
                         <ul class="categories">
-{{#each loadCatData}}
-<li>
-    <input type="text" hidden value="{{this._id}}" id='cat_id{{this._id}}'>
-    <a href="#" onclick="categoryFilter('{{this._id}}')">{{this.category}}</a>
-</li>
-{{/each}}
+                            {{#each loadCatData}}
+                            <li>
+                                <input type="text" hidden value="{{this._id}}" id='cat_id{{this._id}}'>
+                                <a href="#" onclick="categoryFilter('{{this._id}}')">{{this.category}}</a>
+                            </li>
+                            {{/each}}
 
                             {{!-- <li><a href="shop-grid-right.html">Blouses & Shirts</a></li>
                             <li><a href="shop-grid-right.html">Dresses</a></li>
@@ -185,10 +187,10 @@
                             {{!-- <li><a class="active" href="#">Featured</a></li> --}}
                             {{!-- <li><a href="#" onclick="sortProductByPrice('asc')">Price: Low to High</a></li>
                             <li><a href="#" onclick="sortProductByPrice('desc')">Price: High to Low</a></li> --}}
-                                <li><a  onclick="sortLowToHigh()">Price: Low to High</a></li>
-    <li><a  onclick="sortHighToLow()">Price: High to Low</a></li>
-    <li><a  onclick="sortAZ()">A - Z</a></li>
-    <li><a  onclick="sortZA()">Z - A</a></li>
+                            <li><a onclick="sortLowToHigh()">Price: Low to High</a></li>
+                            <li><a onclick="sortHighToLow()">Price: High to Low</a></li>
+                            <li><a onclick="sortAZ()">A - Z</a></li>
+                            <li><a onclick="sortZA()">Z - A</a></li>
 
                         </ul>
                     </div>

@@ -43,7 +43,7 @@
                             <a class="nav-link active" href="/wallet">Wallet</a>
                             <a class="nav-link " href="/adresses">My Address</a>
                             <a class="nav-link" href="#">Account details</a>
-                            <a class="nav-link" href="#">Newsletter</a>
+                           
                         </nav>
                     </aside>
 
@@ -99,7 +99,7 @@
                                                     <tbody>
                                                         {{#each history}}
                                                         <tr>
-                                                            <td>{{ this.date}}</td>
+                                                            <td>{{formatDate this.date}}</td>
 
                                                             <td>{{this.status}}</td>
                                                             <td>₹{{this.amount}}</td>

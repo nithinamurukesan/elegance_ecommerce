@@ -345,7 +345,7 @@ const cancelOrder = async (req, res) => {
               //await Product.updateOne({ _id: data._id }, { $inc: { stock: data.quantity } });
               console.log(canceledOrder.amountAfterDscnt)
               if(canceledOrder.couponUsed){
-                 updatedwallet = canceledOrder.amountAfterDscnt 
+                 updatedwallet = canceledOrder.amountAfterDscnt -50
 
               }
               else{
@@ -610,104 +610,7 @@ const returnOneProduct = async (req, res) => {
 
 
 
-//  const getInvoice = async (req, res) => {
-//   try {
-//     const orderId = req.query.id; 
-   
-  
 
-//     const order = await Orders.findById(orderId);
-//     if (!order) {
-//       return res.status(404).send({ message: 'Order not found' });
-//     }
-
-//     const { userId, address: addressId } = order;
-    
-//     const [user, address] = await Promise.all([
-//       User.findById(userId),
-//       Address.findById(addressId),
-//     ]);
-
-
-//     const products = order.product.map((product) => ({
-//       quantity: product.quantity.toString(),
-//       description: product.name,
-//       tax: 0,
-//       price: product.price,
-//     }));
-//     console.log(products)
-
-//     const date = moment(order.date).format('MMMM D, YYYY');
-    
-    
-
-
-//     if (!user || !address) {
-//       return res.status(404).send({ message: 'User or address not found' });
-//     }
-
-//     const filename = `invoice_${orderId}.pdf`;
-
-//     const data = {
-//       mode: "development",
-//       currency: 'USD',
-//       taxNotation: 'vat',
-//       marginTop: 25,
-//       marginRight: 25,
-//       marginLeft: 25,
-//       marginBottom: 25,
-//       background: 'https://public.easyinvoice.cloud/img/watermark-draft.jpg',
-//       sender: {
-//         company: 'SHOPIFY',
-//         address: 'Canyon',
-//         zip: '600091',
-//         city: 'Chennai',
-//         country: 'India',
-//       },
-//       client: {
-//         company: user.name,
-//         address: address.adressLine1,
-//         zip: address.pin,
-//         city: address.city,
-//         country: 'India',
-//       },
-
-//       information: {
-//         // Invoice number
-//         number: "2021.0001",
-//         // Invoice data
-//         date: date,
-//         // Invoice due date
-//         // duedate: "31-12-2021"
-//     },
-  
-//       // invoiceNumber: '2023001',
-//       // invoiceDate: date,
-
-
-//       products: products
-     
-//     };
-
-//     console.log(data)
-
-// easyinvoice.createInvoice(data, function (result) {
-
-//   easyinvoice.createInvoice(data, function (result) {
-//     const fileName = 'invoice.pdf'
-//     const pdfBuffer = Buffer.from(result.pdf, 'base64');
-//     res.setHeader('Content-Type', 'application/pdf');
-//     res.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
-//     res.send(pdfBuffer);
-//   })
-//   console.log('PDF base64 string: ');
-// });
-// } 
-   
-//    catch (error) {
-//     res.sendStatus(500);
-//   }
-// };
 
 const getInvoice = async (req, res) => {
     try {
@@ -757,7 +660,7 @@ const getInvoice = async (req, res) => {
         marginBottom: 25,
         background: 'https://public.easyinvoice.cloud/img/watermark-draft.jpg',
         sender: {
-          company: 'SHOPIFY',
+          company: 'Elegance',
           address: 'Canyon',
           zip: '600091',
           city: 'Chennai',
@@ -785,6 +688,7 @@ const getInvoice = async (req, res) => {
   
   
         products: products
+        
        
       };
   
@@ -797,6 +701,7 @@ const getInvoice = async (req, res) => {
       const pdfBuffer = Buffer.from(result.pdf, 'base64');
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', 'attachment; filename=' + fileName);
+      
       res.send(pdfBuffer);
     })
     console.log('PDF base64 string: ');
