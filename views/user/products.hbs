@@ -16,7 +16,7 @@
                 <div class="col-lg-9">
                     <div class="shop-product-fillter">
                         <div class="totall-product">
-                            <p> We found <strong class="text-brand">{{count}}</strong> items for you!</p>
+                            {{!-- <p id="found"> We found <strong class="text-brand" id = "count">{{count}}</strong> items for you!</p> --}}
                         </div>
                         <div class="sort-by-product-area">
                             <div class="sort-by-cover mr-10">
@@ -201,49 +201,26 @@
                             <h5 class="widget-title mb-10">New products</h5>
                             <div class="bt-1 border-color-1"></div>
                         </div>
+                        {{#each newproducts}}
                         <div class="single-post clearfix">
                             <div class="image">
-                                <img src="/assets/imgs/shop/thumbnail-3.jpg" alt="#">
+                                <img src="/images/products/{{this.imageUrl.[0]}}" alt="#">
                             </div>
                             <div class="content pt-10">
-                                <h5><a href="shop-product-detail.html">Chen Cardigan</a></h5>
-                                <p class="price mb-0 mt-5">₹99.50</p>
-                                <div class="product-rate">
-                                    <div class="product-rating" style="width:90%"></div>
-                                </div>
+                                <h5><a href="shop-product-detail.html">{{this.name}}</a></h5>
+                                <p class="price mb-0 mt-5">₹ {{this.price}}</p>
+                                
                             </div>
                         </div>
-                        <div class="single-post clearfix">
-                            <div class="image">
-                                <img src="/assets/imgs/shop/thumbnail-4.jpg" alt="#">
-                            </div>
-                            <div class="content pt-10">
-                                <h6><a href="shop-product-detail.html">Chen Sweater</a></h6>
-                                <p class="price mb-0 mt-5">₹89.50</p>
-                                <div class="product-rate">
-                                    <div class="product-rating" style="width:80%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="single-post clearfix">
-                            <div class="image">
-                                <img src="/assets/imgs/shop/thumbnail-5.jpg" alt="#">
-                            </div>
-                            <div class="content pt-10">
-                                <h6><a href="shop-product-detail.html">Colorful Jacket</a></h6>
-                                <p class="price mb-0 mt-5">₹25</p>
-                                <div class="product-rate">
-                                    <div class="product-rating" style="width:60%"></div>
-                                </div>
-                            </div>
-                        </div>
+                        {{/each}}
+                        
                     </div>
                     <div class="banner-img wow fadeIn mb-45 animated d-lg-block d-none">
                         <img src="/assets/imgs/banner/banner-11.jpg" alt="">
                         <div class="banner-text">
                             <span>Women Zone</span>
                             <h4>Save 17% on <br>Office Dress</h4>
-                            <a href="shop-grid-right.html">Shop Now <i class="fi-rs-arrow-right"></i></a>
+                            
                         </div>
                     </div>
                 </div>

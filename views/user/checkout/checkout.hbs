@@ -363,6 +363,9 @@
 
   const Cod = async () => {
     const selectAddress = document.querySelector('#selectedAddress').value
+    if(selectAddress){
+
+
     const subTotal = Number(document.getElementsByName('subTotal')[0].value)
 
     const datas = await fetch('/place_order', {
@@ -383,15 +386,16 @@
     })
 
     const placeOrderData = await datas.json()
-
-    if (placeOrderData) {
-      console.log(' hiiii am from place oreder data')
-
-      //const wallet = document.getElementById('update_wallet').innerText = updateWallet
-      window.location.href = '/order_sucess'
+    const orderID = placeOrderData.orderDetails.orderId;
+    window.location.href = `/order_sucess?orderID=${orderID}`
+    } else{
+      alertify.set('notifier', 'position', 'bottom-center');
+      alertify.success('Please select an address')
     }
-  }
 
+
+
+  }
   const online = () => {
     subTotal = Number(document.getElementsByName('subTotal')[0].value)
 

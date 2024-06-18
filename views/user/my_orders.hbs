@@ -32,7 +32,7 @@
         </div>
                 <section class="content-main col-md-11">
             <div class="content-header">
-                <h2 class="content-title">Profile setting </h2>
+                <h2 class="content-title">Profile Details </h2>
             </div>
             <div class="card">
                 <div class="card-body">
@@ -43,8 +43,8 @@
                                 <a class="nav-link active" href="/my_orders">Orders</a>
                              <a class="nav-link" href="/wallet">Wallet</a>
                                 <a class="nav-link" href="/adresses">My Address</a>
-                                <a class="nav-link" href="#">Account details</a>
-                                <a class="nav-link" href="#">Newsletter</a>
+                                <a class="nav-link" href="/changePassword">Change Password</a>
+                               
                             </nav>
                         </aside>
                         <div class="col-lg-9">
@@ -92,9 +92,9 @@
             </div> <!-- card end// -->
                     <div class="pagination-area mt-15 mb-50">
             <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-start">
+                <ul class="pagination justify-content-start ">
                     {{#each pages}}
-                             <li class="page-item active"><a class="page-link" href="?page={{this}}">{{this}}</a></li>
+                    <li class="page-item {{#ifEquals this ../currentPage}}active{{/ifEquals}} "><a class="page-link " href="?page={{this}}">{{this}}</a></li>
                     {{/each}}
                 </ul>
             </nav>

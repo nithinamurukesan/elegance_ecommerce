@@ -1,12 +1,11 @@
 <main class="main">
     <div class="page-header breadcrumb-wrap">
         <div class="container">
-            <div class="breadcrumb">
+            <nav aria-label="breadcrumb" class="breadcrumb">
                 <a href="index.html" rel="nofollow">Home</a>
-                    <span><a href="/profile">profile</a></span>
-
-                    <span><a href="/product">Shop</a></span>
-            </div>
+                <span><a href="/profile">Profile</a></span>
+                <span><a href="/product">Shop</a></span>
+            </nav>
         </div>
     </div>
     <section class="pt-50 pb-150">
@@ -16,22 +15,20 @@
                     <div class="row">
                         <aside class="col-lg-3 border-end">
                             <nav class="nav nav-pills flex-lg-column mb-4">
-                                <a class="nav-link " aria-current="page" href="/profile">General</a>
-                                <a class="nav-link " href="/my_orders">Orders</a>
-                             <a class="nav-link" href="/wallet">Wallet</a>
-                                <a class="nav-link" href="/adresses">My Address</a>
-                                <a class="nav-link" href="#">Account details</a>
-                                <a class="nav-link" href="#">Newsletter</a>
+                                <a class="nav-link" aria-current="page" href="/profile">General</a>
+                                <a class="nav-link" href="/my_orders">Orders</a>
+                                <a class="nav-link" href="/wallet">Wallet</a>
+                                <a class="nav-link" href="/addresses">My Address</a>
+                                <a class="nav-link" href="/changePassword">Change Password</a>
+                               
                             </nav>
                         </aside>
                         <div class="col-md-9">
                             <section class="content-body p-xl-4">
-                                <div class="content-header">
-                                    <div>
-                                        <h2 class="content-title card-title">Order detail</h2>
-                                        <p>Details for Order ID: {{myOrderDetails._id}}</p>
-                                    </div>
-                                </div>
+                                <header class="content-header">
+                                    <h2 class="content-title card-title">Order Detail</h2>
+                                    <p>Details for Order ID: {{myOrderDetails._id}}</p>
+                                </header>
                                 <div class="card">
                                     <header class="card-header">
                                         <div class="row align-items-center">
@@ -39,13 +36,13 @@
                                                 <span>
                                                     <i class="material-icons md-calendar_today"></i>
                                                     <b>{{formattedDate}}</b>
-                                                </span> <br>
+                                                </span><br>
                                                 <small class="text-muted">Order ID: {{myOrderDetails._id}}</small>
                                             </div>
                                             <div class="col-lg-6 col-md-6 ms-auto text-md-end">
-                                                <a onclick="getInvoice('{{myOrderDetails._id}}')"
-                                                    class="btn btn-secondary print ms-2" href="#"><i
-                                                        class="icon material-icons md-print"></i></a>
+                                                <a onclick="getInvoice('{{myOrderDetails._id}}')" class="btn btn-secondary print ms-2" href="#">
+                                                    <i class="icon material-icons md-print"></i>
+                                                </a>
                                             </div>
                                         </div>
                                     </header>
@@ -59,7 +56,7 @@
                                                     <div class="text">
                                                         <h6 class="mb-1">Customer</h6>
                                                         <p class="mb-1">
-                                                            {{address.name}} <br> {{address.mobile}}
+                                                            {{address.name}}<br>{{address.mobile}}
                                                         </p>
                                                     </div>
                                                 </article>
@@ -70,11 +67,9 @@
                                                         <i class="text-primary material-icons md-local_shipping"></i>
                                                     </span>
                                                     <div class="text">
-                                                        <h6 class="mb-1">Order info</h6>
+                                                        <h6 class="mb-1">Order Info</h6>
                                                         <p class="mb-1">
-                                                            Shipping: Fargo express <br> Pay method:
-                                                            {{myOrderDetails.paymentMethod}} <br> Status:
-                                                            {{myOrderDetails.status}}
+                                                            Shipping elegance factory<br>Pay method: {{myOrderDetails.paymentMethod}}<br>Status: {{myOrderDetails.status}}
                                                         </p>
                                                     </div>
                                                 </article>
@@ -85,24 +80,22 @@
                                                         <i class="text-primary material-icons md-place"></i>
                                                     </span>
                                                     <div class="text">
-                                                        <h6 class="mb-1">Deliver to</h6>
+                                                        <h6 class="mb-1">Deliver To</h6>
                                                         <p class="mb-1">
-                                                            City: {{address.city}}, {{address.state}}
-                                                            <br>{{address.addressLine1}} <br>{{address.addressLine2}}
-                                                            <br>Pin: {{address.pin}}
+                                                            City: {{address.city}}, {{address.state}}<br>{{address.addressLine1}}<br>{{address.addressLine2}}<br>Pin: {{address.pin}}
                                                         </p>
                                                     </div>
                                                 </article>
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-lg-7">
+                                            <div class="col-lg-14">
                                                 <div class="table-responsive">
                                                     <table class="table">
                                                         <thead>
                                                             <tr>
-                                                                <th width="40%">Product</th>
-                                                                <th width="20%">Unit Price</th>
+                                                                <th width="40%">Product Image</th>
+                                                                <th width="20%">Product Price</th>
                                                                 <th width="20%">Quantity</th>
                                                                 <th width="20%">Total</th>
                                                                 <th width="20%" class="text-end">Cancel</th>
@@ -114,42 +107,15 @@
                                                                 <td>
                                                                     <a class="itemside" href="#">
                                                                         <div class="left">
-                                                                            <img src="/images/products/{{this.product.image}}"
-                                                                                width="40" height="40" class="img-xs"
-                                                                                alt="Item">
+                                                                            <img src="/images/products/{{this.product.image}}" width="40" height="40" class="img-xs" alt="Item">
                                                                         </div>
                                                                         <div class="info">{{this.product.name}}</div>
                                                                     </a>
                                                                 </td>
-                                                                <td> ₹{{this.product.price}} </td>
-                                                                <td>{{this.product.quantity}} </td>
-                                                                <td class="text-end">₹{{multiply this.product.quantity
-                                                                    this.product.price }}</td>
-
+                                                                <td>₹{{this.product.price}}</td>
+                                                                <td>{{this.product.quantity}}</td>
+                                                                <td class="text-end">₹{{multiply this.product.quantity this.product.price}}</td>
                                                                 <td class="text-end">
-                                                                    {{!-- {{#singlestatuchecker ../myOrderDetails.product}}
-                                                                    {{#if this.product.isReturned}}
-                                                                    <span
-                                                                        class="badge rounded-pill alert-info text-info">Returned</span>
-                                                                    {{else}}
-                                                                    <button id="returnnow-btn"
-                                                                        class="btn btn-primary btn-sm return-btn"
-                                                                        data-order-id="{{../myOrderDetails._id}}"
-                                                                        data-prod-id="{{this.product._id}}">Return</button>
-                                                                    {{/if}}
-                                                                    {{else}}
-                                                                    {{#if this.product.isCancelled}}
-                                                                    <span
-                                                                        class="badge rounded-pill alert-danger text-danger">Cancelled</span>
-                                                                    {{else}}
-                                                                    <button id="cancel-btn"
-                                                                        class="btn btn-primary btn-sm cancel-btn"
-                                                                        data-order-id="{{../myOrderDetails._id}}"
-                                                                        data-prod-id="{{this.product._id}}">Cancel</button>
-                                                                    {{/if}} 
-                                                                   
-                                                                    
-                                                                    {{/singlestatuchecker}} --}}
                                                                     {{#singlestatuchecker this.product}}
                                                                         {{#ifCond ../myOrderDetails.status '==' 'Delivered'}}
                                                                             <button id="returnnow-btn" class="btn btn-primary btn-sm return-btn" data-order-id="{{../myOrderDetails._id}}" data-prod-id="{{this.product.id}}">Return</button>
@@ -165,50 +131,25 @@
                                                                     <article class="float-end">
                                                                         <dl class="dlist">
                                                                             <dt>Shipping:</dt>
-                                                                            <dd>
-                                                                                <span class="text-danger">+₹
-                                                                                    50</span>
-                                                                            </dd>
+                                                                            <dd><span class="text-danger">+₹50</span></dd>
                                                                         </dl>
                                                                         {{#if myOrderDetails.coupon}}
                                                                         <dl class="dlist">
                                                                             <dt>Discount:</dt>
-                                                                            <dd>
-                                                                                <span class="text-danger">-₹
-                                                                                    {{myOrderDetails.discountAmt}}</span>
-                                                                            </dd>
+                                                                            <dd><span class="text-danger">-₹{{myOrderDetails.discountAmt}}</span></dd>
                                                                         </dl>
                                                                         <dl class="dlist">
                                                                             <dt>Grand Total:</dt>
-                                                                            <dd>
-                                                                                <b
-                                                                                    class="h5">₹{{myOrderDetails.amountAfterDscnt}}</b>
-                                                                            </dd>
+                                                                            <dd><b class="h5">₹{{myOrderDetails.amountAfterDscnt}}</b></dd>
                                                                         </dl>
                                                                         {{else}}
                                                                         <dl class="dlist">
                                                                             <dt>Grand Total:</dt>
-                                                                            <dd>
-                                                                                <b
-                                                                                    class="h5">₹{{add myOrderDetails.total 50}}</b>
-                                                                            </dd>
+                                                                            <dd><b class="h5">₹{{add myOrderDetails.total 50}}</b></dd>
                                                                         </dl>
-
                                                                         {{/if}}
-                                                                        {{!-- {{#ifCond myOrderDetails.status "!="
-                                                                        "Cancelled"}}
-                                                                        <button id="cancelOrder"
-                                                                            data-order-id="{{myOrderDetails._id}}"
-                                                                            class="btn btn-sm btn-primary">Cancel
-                                                                            Entire Order</button>
-                                                                        {{else}}
-                                                                        <span
-                                                                            class="badge rounded-pill alert-danger text-danger">Order
-                                                                            Cancelled</span>
-                                                                        {{/ifCond}} --}}
                                                                         {{#statuchecker myOrderDetails}}
                                                                         {{else}}
-
                                                                         {{/statuchecker}}
                                                                     </article>
                                                                 </td>
@@ -233,6 +174,7 @@
         </div>
     </section>
 </main>
+
 
 
 

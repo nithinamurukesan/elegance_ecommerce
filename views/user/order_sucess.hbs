@@ -1,56 +1,190 @@
-<link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet">
-<style>
-  body {
-    text-align: center;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:400,400i,700,900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            text-align: center;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
+        }
 
-  h1 {
-    color: #88B04B;
-    font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
-    font-weight: 900;
-    font-size: 40px;
-    margin-bottom: 10px;
-  }
+        h1 {
+            color: #88B04B;
+            font-weight: 900;
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
 
-  p {
-    color: #404F5E;
-    font-family: "Nunito Sans", "Helvetica Neue", sans-serif;
-    font-size: 20px;
-    margin: 0;
-  }
+        p {
+            color: #404F5E;
+            font-size: 20px;
+            margin: 0;
+        }
 
-  #tick{
-        color: #9ABC66;
-  }
+        #tick {
+            color: #9ABC66;
+        }
 
-  i {
-    font-size: 100px;
-    line-height: 200px;
-    margin-left: -15px;
-  }
+        i {
+            font-size: 100px;
+            line-height: 200px;
+            margin-left: -15px;
+        }
 
-  .card {
-    background: white;
-    padding: 60px;
-    border-radius: 4px;
-    box-shadow: 0 2px 3px #C8D0D8;
-    display: inline-block;
-    margin: 0 auto;
-  }
-</style>
-  
+        .card {
+            background: white;
+            padding: 60px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: inline-block;
+            margin: 0 auto;
+            width: 70%;
+            max-width: 800px;
+            margin-top: 50px;
+        }
 
+        .table-responsive {
+            margin-top: 20px;
+        }
 
+        .table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            text-align: left;
+        }
+
+        .table th {
+            background-color: #f8f8f8;
+        }
+
+        .table img {
+            border-radius: 4px;
+        }
+
+        .float-end {
+            float: right;
+        }
+
+        .dlist {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .dlist dt {
+            float: left;
+            font-weight: bold;
+        }
+
+        .dlist dd {
+            margin: 0 0 10px 0;
+            padding: 0 0 0 60px;
+        }
+
+        .h5 {
+            font-size: 1.25rem;
+            margin: 0;
+        }
+
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            color: #fff;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            background-color: #28a745;
+            border: 1px solid #28a745;
+            padding: 0.375rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            border-radius: 0.25rem;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+    </style>
+</head>
 <body>
-  <div class="card" style="margin-top: 130px;" >
-    <div style="border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;">
-      <i id="tick" class="checkmark">✓</i>
+    <div class="card">
+        <div style="border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;">
+            <i id="tick" class="checkmark">✓</i>
+        </div>
+        <h1>Success</h1>
+        <p>We received your purchase request;<br /> we'll be in touch shortly!</p>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th width="40%">Product Image</th>
+                        <th width="20%">Product Price</th>
+                        <th width="20%">Quantity</th>
+                        <th width="20%">Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each orderedProDet}}
+                    <tr>
+                        <td>
+                            <a class="itemside" href="#">
+                                <div class="left">
+                                    <img src="/images/products/{{this.image}}" width="40" height="40" class="img-xs" alt="Item">
+                                </div>
+                                <div class="info">{{this.name}}</div>
+                            </a>
+                        </td>
+                        <td>₹{{this.price}}</td>
+                        <td>{{this.quantity}}</td>
+                        <td class="text-end">₹{{multiply this.quantity this.price}}</td>
+                    </tr>
+                    {{/each}}
+                    <tr>
+                        <td colspan="5">
+                            <article>
+                                <dl class="dlist">
+                                    <dt>Shipping:</dt>
+                                    <dd><span class="text-danger">+₹50</span></dd>
+                                </dl>
+                                {{#if myOrderDetails.coupon}}
+                                <dl class="dlist">
+                                    <dt>Discount:</dt>
+                                    <dd><span class="text-danger">-₹{{myOrderDetails.discountAmt}}</span></dd>
+                                </dl>
+                                <dl class="dlist">
+                                    <dt>Grand Total:</dt>
+                                    <dd><b class="h5">₹{{myOrderDetails.amountAfterDscnt}}</b></dd>
+                                </dl>
+                                {{else}}
+                                <dl class="dlist">
+                                    <dt>Grand Total:</dt>
+                                    <dd><b class="h5">₹{{add myOrderDetails.total 50}}</b></dd>
+                                </dl>
+                                {{/if}}
+                            </article>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-    <h1>Success</h1>
-    <p>We received your purchase request;<br /> we'll be in touch shortly!</p>
-  </div>
-  <div>
-    <a class="btn btn-success m-5" href="/my_orders">View Order</a>
-  </div>
+    <div>
+        <a class="btn" href="/my_orders">View Order</a>
+    </div>
 </body>
-
+</html>

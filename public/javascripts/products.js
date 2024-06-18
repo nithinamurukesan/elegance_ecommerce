@@ -67,6 +67,7 @@ const getProductsPage = async (page, catId = '', sort = '') => {
 
     const data = await response.json();
     if (data.proData.length > 0) {
+
         filteredDataDisplay(data.proData);
         updatePagination(data.pages, data.currentPage, 'getProductsPage', catId, sort);
     } else {
@@ -375,6 +376,7 @@ const searchProducts = async () => {
 
     if (data.length > 0) {
         filteredDataDisplay(data)
+        count.innerHTML = data.length
     } else {
         proContainer.innerHTML = `<h2 class="m-5">No product available</h2>`
     }

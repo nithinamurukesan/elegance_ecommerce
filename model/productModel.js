@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const { array } = require('../middleware/multer')
+const { Timestamp } = require('mongodb')
 
 const produtSchema = new mongoose.Schema({
  
@@ -58,8 +59,11 @@ const produtSchema = new mongoose.Schema({
     bestSelling:{
         type:Number,
         default:0
-    }
-
+    },
+    
+},
+{
+    timestamps:true
 })
 
 

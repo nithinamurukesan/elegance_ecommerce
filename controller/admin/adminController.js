@@ -6,7 +6,8 @@ const Product     = require("../../model/productModel");
 const Coupon      = require("../../model/coupon");
 const Orders      = require("../../model/order");
 const Address     = require("../../model/address");
-const Banner      = require('../../model/banner')
+
+const Reviews      =require('../../model/reviewModel')
 const moment      = require("moment");
 const fs= require('fs')
 const path= require('path')
@@ -224,45 +225,7 @@ const editCategory = async (req, res) => {
   }
 };
 
-/// To update Category post///
 
-// const updateCategory = async (req, res) => {
-//   try {
-//     const catName = req.body.name;
-//     const image = req.file;
-//     const catId = req.params.id;
-
-//     const cat = await Category.findById(catId);
-//     const catImg = cat.imageUrl;
-//     let updImge;
-
-//     if (image) {
-//       updImge = image.filename;
-//     } else {
-//       updImge = catImg;
-//     }
-
-
-//     const catExist = await Category.findOne({ category: catName });
-
-//     if (!catExist) {
-//       await Category.findByIdAndUpdate(
-//         catId,
-//         {
-//           category: req.body.name,
-//           imageUrl: updImge,
-//         },
-//         { new: true }
-//       );
-
-//       req.session.categoryUpdate = true;
-//       res.redirect("/admin/category");
-//     } else {
-//       // req.session.catExist = true
-//       res.redirect("/admin/category");
-//     }
-//   } catch (error) {}
-// };
 
 const updateCategory = async (req, res) => {
   try {
@@ -304,18 +267,7 @@ const updateCategory = async (req, res) => {
     res.status(500).send(" Error");
   }
 };
-/// To delete category ///
 
-// const deleteCategory = async (req, res) => {
-//   let catId = req.params.id;
-
-//   try {
-//     await Category.findByIdAndDelete(catId);
-//     res.redirect("/admin/category");
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
 
 const deleteCategory = async (req, res) => {
   try {
@@ -730,61 +682,93 @@ const deleteProdImage =  async (req, res) => {
 }
 
 
-const loadBanner = async (req, res) => {
-  try {
+
+
+
+
+// const getOrders = async (req, res) => {
+//   try {
+//     const PAGE_SIZE = 6;
+//     const page = parseInt(req.query.page) || 1;
+//     const skip = (page - 1) * PAGE_SIZE;
+
+//     const orders = await Orders.find()
+//       .sort({ date: -1 })
+//       .skip(skip)
+//       .limit(PAGE_SIZE);
+
+//     const now = moment();
+
+//     const ordersData = orders.map((order) => {
+//       const formattedDate = moment(order.date).format("MMMM D, YYYY");
+
+//       return {
+//         ...order.toObject(),
+//         date: formattedDate,
+//       };
+//     });
+
+//     const totalPages = Math.ceil(await Orders.countDocuments()/PAGE_SIZE)  // Example value
+//     const pages = Array.from({length: totalPages}, (_, i) => i + 1);
+
+//     console.log(ordersData);
+
+//     res.render("admin/orders", {
     
-    const bannerData = await Banner.find()
-    res.render('admin/banners' , {bannerData, layout:'adminlayout'})
+//       ordersData, pages ,
+//       currentPage: page,
+//       // totalPages: Math.ceil(await Orders.countDocuments() / PAGE_SIZE),
+//       layout:'adminlayout'
+//     });
+//   } catch (error) {
+//     console.log(error.message);
+//     res.status(500).send(" Error");
+//   }
+// };
+
+
+
+
+
+
+
+const loadReviews = async (req, res) => {
+  try {
+    const PAGE_SIZE = 6;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * PAGE_SIZE;
+
+    const reviews = await Reviews.aggregate([
+      {
+        $lookup: {
+          from: "products",
+          localField: "productId",
+          foreignField: "_id",
+          as: "productDetails"
+        }
+      },
+      {
+        $unwind: "$productDetails"
+      },
+      { $skip: skip },
+      { $limit: PAGE_SIZE }
+    ]);
+
+    const totalReviews = await Reviews.countDocuments();
+    const totalPages = Math.ceil(totalReviews / PAGE_SIZE);
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+    res.render('admin/review', {
+      reviews,
+      pages,
+      currentPage: page,
+      layout: 'adminlayout'
+    });
   } catch (error) {
     console.log(error.message);
-    res.status(500).send(" Error");
-  }
-}
-
-const addBanner =  (req, res) => {
-  try {
-   
-    res.render('admin/add_banner', {bannerData, layout:'adminlayout'})
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send(" Error");
-  }
-}
-
-
-const addBannerPost = async (req, res) => {
-  try {
-    const {title, link} = req.body
-    const image  = req.file.filename 
-
-    const banner = new Banner ({
-      title : title,
-      image : image,
-      link  : link,
-    })
-
-    await banner.save()
-  } catch (error) { 
-    console.log(error.message);
-    res.status(500).send(" Error");
-  }
-}
-
-
-
-const deleteBanner = async (req, res) => {
-  try {
-    const id = req.query.id;
-
-    await Coupon.findByIdAndDelete(id);
-
-    res.redirect("/admin/banners");
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send(" Error");
+    res.status(500).send("Error");
   }
 };
-
 
 
 
@@ -822,8 +806,7 @@ module.exports = {
 
   changeOrderStatus,
 
-  loadBanner,
-  addBanner,
-  addBannerPost,
-  deleteBanner,
+  
+
+  loadReviews
 };

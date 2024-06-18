@@ -3,7 +3,9 @@ const argon2     = require('argon2')
 const userHelper = require('../../helpers/user.helper')
 const Product    = require('../../model/productModel')
 const Category   = require('../../model/categoryModel')
-const Banners    = require('../../model/banner')
+
+const Review     =require('../../model/reviewModel')
+const Order      =require('../../model/order')
 const { log } = require('handlebars')
 
 const mongoose = require('mongoose')
@@ -27,11 +29,11 @@ const loadHome = async(req, res)=>{
    try {
     const loadProData = await Product.find().lean()
     const loadCatData = await Category.find({isListed:true}).lean()
-    const banners     = await Banners.find().lean()
+    
     const userData = req.session.user
 
 
-    res.render('user/home',{userData, loadProData, loadCatData, banners})
+    res.render('user/home',{userData, loadProData, loadCatData, })
     
    } catch (error) {
     console.log(error);
@@ -48,6 +50,7 @@ const getProduct = async (req, res) => {
         let page = 1; // Initial page is always 1 for the GET request
         const limit = 6;
         const loadCatData = await Category.find().lean();
+        const newproducts=await Product.find({is_blocked:false}).sort({_id:-1}).limit(3).lean()
         const proData = await Product.find({ is_blocked: false })
             .skip((page - 1) * limit)
             .limit(limit)
@@ -64,6 +67,8 @@ const getProduct = async (req, res) => {
             userData: user,
             loadCatData,
             currentFunction: 'getProductsPage',
+            newproducts,
+            count
             // layout:'productLayout'
             
         });
@@ -143,7 +148,14 @@ const ProductView = async(req, res)=>{
             }
         )
 
+        const reviews = await Review.find({productId: proId}).lean()
 
+        console.log(reviews)
+        let reviewExist = true
+        if(reviews.length == 0){
+            reviewExist = false
+        }
+        let userCanReview = false;
     
 
 
@@ -159,15 +171,32 @@ const ProductView = async(req, res)=>{
 
             if(productExist.length === 0) productExistInCart = false
             else productExistInCart = true
+
             
-        res.render('user/productview', {proData, userData ,  productExistInCart})
+        
+        const Orders = await Order.find({userId :userId , status: "Delivered"},{product:1,_id:0})
+        for(let i of Orders){
+            
+            for(let j of i.product){
+                console.log(j.name)
+                if(j.name == proData.name){
+                    console.log("I found " , j.name)
+                    userCanReview = true
+                }
+            }
+        }
+        console.log(userCanReview)
+            
+        res.render('user/productview', {proData, userData ,  productExistInCart , reviews, reviewExist, userCanReview})
       }else{
-        res.render('user/productview', {proData})    
+        res.render('user/productview', {proData , reviews, reviewExist})    
       }
     } catch (error) {
         console.log(error);
     }
 }
+
+
 
 
 //user login page
@@ -504,6 +533,31 @@ const productSearch = async(req, res)=>{
         }
     }
 
+    const addNewReviewPost = async (req, res) => {
+        try {
+            const userData = req.session.user
+            const id       = userData._id
+            
+            const review = new Review({
+                userId      : id,
+                productId   : req.body.proId,
+                name        : req.body.name,
+                // rating      : req.body.rating,
+                comment     : req.body.comment, 
+                email       : req.body.email,
+                // date        : Date.now, 
+                is_default  : false,
+            })
+    
+            const reviewData = await review.save()
+            console.log(reviewData)
+            res.redirect(`/productview?id=${req.body.proId}`)
+           
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
 
 module.exports = {
@@ -524,5 +578,7 @@ module.exports = {
     sortProductByPrice,
     googleCallback,
     aboutpage,
-    contactpage
+    contactpage,
+    addNewReviewPost
+    
 }

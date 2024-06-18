@@ -1,0 +1,26 @@
+<a id="logout-link" class="menu-link" href="#">
+    <i class="icon material-icons md-exit_to_app"></i>
+    <span class="text"> Logout </span>
+</a>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('logout-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Are you sure you want to logout?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, logout!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/admin/logout';
+            }
+        });
+    });
+});
+</script>

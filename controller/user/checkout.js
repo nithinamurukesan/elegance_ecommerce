@@ -155,10 +155,8 @@ const placeOrder = async(req, res) => {
 
 
        let saveOrder = async () => {
-        console.log(req.body)
-        if(req.body.couponData){
 
-            console.log(req.body)
+        if(req.body.couponData){
           const order = new Order({
             userId  : userId,
             product : productDet,
@@ -169,15 +167,11 @@ const placeOrder = async(req, res) => {
             discountAmt      : req.body.couponData.discountAmt,
             amountAfterDscnt : req.body.couponData.newTotal,
             coupon           : req.body.couponName,
-            couponUsed       : true,
-
         })
-
-        await Coupon.updateOne({ code : req.body.couponName}, { $push: { usedBy: userId } });
-
 
         const ordered = await order.save()
 
+        await Coupon.updateOne({ code: req.body.couponName }, { $push: { usedBy: userId } });
 
         }else{
             const order = new Order({
@@ -206,22 +200,18 @@ const placeOrder = async(req, res) => {
 
             await Product.updateOne(
                 { _id: productId },
-                { $set: { stock: updatedStock, isOnCart: false },
-                 $inc: { 
-                    Selling:1} }
+                { $set: { stock: updatedStock, isOnCart: false }, $inc: { bestSelling:1} }
               );
-            
-                const populatedProd= await Product.findById(productId).populate("category").lean()
-                await Category.updateMany({ _id: populatedProd.category._id }, { $inc: { bestselling:1} });
 
-            
+            const populatedProd= await Product.findById(productId).populate("category").lean()
+            await Category.updateMany({ _id: populatedProd.category._id }, { $inc: { bestSelling:1} });
               
         })
 
      
         userDetails.cart = []
         await userDetails.save()
-        console.log(userDetails.cart);
+
       }
 
 
@@ -230,9 +220,19 @@ const placeOrder = async(req, res) => {
 
           saveOrder()
 
+          const orderDetails = {
+            orderId: ordeId,
+            products: productDet,
+            total: subTotal,
+            paymentMethod: payMethod,
+          };
+  
+
+
           res.json({ 
             CODsucess : true,
-            toal      : subTotal
+            toal      : subTotal,
+            orderDetails
         }) 
      }
 
@@ -255,10 +255,18 @@ const placeOrder = async(req, res) => {
 
             saveOrder()
 
+            const orderDetails = {
+                orderId: ordeId,
+                products: productDet,
+                total: subTotal,
+                paymentMethod: payMethod,
+              };
+
             res.json({
                 razorPaySucess : true,
                 order,
                 amount, 
+                orderDetails
             })
 
             
@@ -270,6 +278,16 @@ const placeOrder = async(req, res) => {
          if ( payMethod === 'wallet' ){
             const newWallet = req.body.updateWallet
             const userData  = req.session.user
+            const userId = userData._id
+
+            const orderDetails = {
+                orderId: ordeId,
+                products: productDet,
+                total: subTotal,
+                paymentMethod: payMethod,
+              };
+
+
 
              
            await User.findByIdAndUpdate(userId, { $set:{ wallet:newWallet }},  { new : true })
@@ -277,14 +295,15 @@ const placeOrder = async(req, res) => {
 
             saveOrder()
 
-            res.json(newWallet)
+            res.json({newWallet,
+                orderDetails}
+            )
         }
        }  
 
        
     } catch (error) {
-        console.log(error.message);
-    res.status(500).send(" Error");
+        console.log(error);
     }
 }
 

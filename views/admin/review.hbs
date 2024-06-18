@@ -1,0 +1,127 @@
+  <aside class="navbar-aside" id="offcanvas_aside">
+    <div class="aside-top">
+        
+           <a href="/admin/home" class="active"
+                        style="font-size: 24px; font-weight: bold; font-family: 'Roboto', sans-serif;">ELEGANCE</a>
+               
+        <div>
+            <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i>
+            </button>
+        </div>
+    </div>
+    <nav>
+        <ul class="menu-aside">
+            <li class="menu-item ">
+                <a class="menu-link" href="/admin/home"> <i class="icon material-icons md-home"></i>
+                    <span class="text">Dashboard</span>
+                </a>
+            </li>
+            <li class="menu-item ">
+                <a class="menu-link" href="/admin/product"> <i class="icon material-icons md-shopping_bag"></i>
+                    <span class="text">Products</span>
+                </a>
+
+            </li>
+            <li class="menu-item ">
+                <a class="menu-link" href="/admin/orders"> <i class="icon material-icons md-shopping_cart"></i>
+                    <span class="text">Orders</span>
+                </a>
+
+            </li>
+
+            <li class="menu-item ">
+                <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-category"></i>
+                    <span class="text">Category</span>
+                </a>
+
+            </li>
+            
+
+             <li class="menu-item ">
+                    <a class="menu-link" href="/admin/coupons"><i class="icon fa-solid fa-ticket"></i>
+                        <span class="text">Coupons</span>
+                    </a>
+      </li>
+
+      <li class="menu-item active">
+                <a class="menu-link " href="/admin/review"> <i class="icon material-icons md-comment"></i>
+                    <span class="text">Reviews</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a class="menu-link" href="/admin/manage_users"> <i class="icon material-icons md-person"></i>
+                    <span class="text">Users</span>
+                </a>
+                </li>
+
+                <li class="menu-item">
+               {{>logout}}
+            </li>
+
+            
+           
+           
+        </ul>
+        
+    </nav>
+</aside>
+  <main class="main-wrap">
+        
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Reviews</h2>
+                    
+                </div>
+                
+            </div>
+            <div class="card mb-4">
+               
+                <!-- card-header end// -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    
+                                    <th>NO</th>
+                                    <th>Product</th>
+                                    <th>Name</th>
+                                    <th>Comment</th>
+                                    <th>Date</th>
+                                    {{!-- <th class="text-end">Action</th> --}}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{#each reviews}}
+                                <tr>
+                                    
+                                    <td>{{increment @index}}</td>
+                                    <td><b>{{this.productDetails.name}}</b></td>
+                                    <td>{{this.name}}</td>
+                                    <td>{{this.comment}}</td>
+                                    <td>{{formatDate this.createdAt}}</td>
+                                    {{!-- <td class="text-end">
+                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
+                                       
+                                    </td> --}}
+                                </tr>
+                                {{/each}}
+                            </tbody>
+                        </table>
+                    </div> <!-- table-responsive//end -->
+                </div>
+                <!-- card-body end// -->
+            </div>
+            <div class="pagination-area mt-15 mb-50">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-start ">
+                    {{#each pages}}
+                    <li class="page-item {{#ifEquals this ../currentPage}}active{{/ifEquals}} "><a class="page-link " href="?page={{this}}">{{this}}</a></li>
+                    {{/each}}
+                </ul>
+            </nav>
+        </div>
+        </section> <!-- content-main end// -->
+        
+    </main>

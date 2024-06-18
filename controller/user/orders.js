@@ -256,13 +256,25 @@ const orderDetails = async (req, res) => {
 
 
 
- const orderSuccess = (req, res) => {
+const orderSuccess = async(req, res) => {
     try {
       const userData = req.session.user
-        res.render('user/order_sucess', {userData})
+      const orderId = req.query.orderID
+      console.log(orderId)
+
+      const myOrderDetails = await Orders.findOne({ orderId: orderId }).lean();
+      console.log(myOrderDetails)
+      const orderedProDet  = myOrderDetails.product
+      const addressId      = myOrderDetails.address
+      const formattedDate = moment(myOrderDetails.date).format("MMMM D, YYYY");
+
+      const address        = await Address.findById(addressId).lean()
+
+
+        res.render('user/order_sucess', { myOrderDetails, orderedProDet, userData, address ,formattedDate})
     } catch (error) {
-        console.log(error.message);
-        res.status(500).send(" Error");    }
+        console.log(error);
+    }
  }
 
 

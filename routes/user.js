@@ -11,6 +11,7 @@ const category = require('../controller/user/category')
 const wishlist = require('../controller/user/wishlist');
 const resetProfile = require('../controller/user/resetProfilePassword')
 const wallet=require('../controller/user/walletController')
+const review=require('../model/reviewModel')
 
 require('../middleware/googleAuth')
 const passport = require('passport')
@@ -37,6 +38,7 @@ router.post('/', userController.doLogin)
 router.get('/product',  userController.getProduct)
 router.post('/product', userController.getProductsPage);
 router.get('/productview',  userController.ProductView)
+router.post('/addReview', logedin, isBlocked, userController.addNewReviewPost)
 router.post('/products_filter',  userController.productSearch)
 router.post('/sort_product_name',  userController.sortProductByName)
 router.post('/sort_product_price',  userController.sortProductByPrice)

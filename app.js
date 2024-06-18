@@ -89,6 +89,11 @@ Handlebars.registerHelper('ifCond', function(v1, v2, options) {
 Handlebars.registerHelper('multiply', function(a, b) {
   return a * b;
 });
+
+// Handlebars.registerHelper('multiply', function (a, b) {
+//   return a * b;
+// });
+
 Handlebars.registerHelper('ifEquals', function(arg1, arg2, options) {
   return (arg1 == arg2) ? options.fn(this) : options.inverse(this);
 });
@@ -178,6 +183,10 @@ Handlebars.registerHelper('formatDate', function (isoDate) {
 
 
   return `${monthYear}`;
+});
+
+Handlebars.registerHelper('increment', function(index) {
+  return index + 1;
 });
 
 // hbs.registerHelper("json", function (context) {
