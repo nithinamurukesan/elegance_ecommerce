@@ -86,7 +86,7 @@ const myOrders = async (req, res) => {
                                   .skip((page - 1) * limit)
                                   .limit(limit * 1)
     const count = await Orders.find({userId}).count();
-    const totalPages = Math.ceil(count/limit)
+    const totalPages = Math.ceil(await Orders.countDocuments()/limit)
     const pages = Array.from({length: totalPages}, (_, i) => i + 1); 
 
       const formattedOrders = orders.map(order => {
@@ -329,6 +329,7 @@ const cancelOrder = async (req, res) => {
       let updatedwallet=0;
 
       let canceledOrder = await Orders.findOne({ _id: ID });
+      console.log(canceledOrder)
 
       if (!canceledOrder) {
           return res.status(404).json({ error: 'Order not found' });
@@ -337,10 +338,13 @@ const cancelOrder = async (req, res) => {
       await Orders.updateOne({ _id: ID }, { $set: { status: 'Cancelled' } });
 
       for (const product of canceledOrder.product) {
+        console.log(canceledOrder.product)
           if (!product.isCancelled) {
+            console.log("i am from product in update section")
               await Product.updateOne(
-                  { _id: product._id },
-                  { $inc: { stock: product.quantity }, $set: { isCancelled: true } }
+
+                  { _id: product.id },
+                  { $inc: { stock: product.quantity } }
               );
 
               await Orders.updateOne(
@@ -356,7 +360,7 @@ const cancelOrder = async (req, res) => {
           //for (const data of canceledOrder) {
               //await Product.updateOne({ _id: data._id }, { $inc: { stock: data.quantity } });
               console.log(canceledOrder.amountAfterDscnt)
-              if(canceledOrder.couponUsed){
+              if(canceledOrder.coupon){
                  updatedwallet = canceledOrder.amountAfterDscnt -50
 
               }
@@ -420,10 +424,11 @@ const returnOrder = async (req, res) => {
       console.log(returnedOrder, "returnedOrder")
 
       const returnedorder = await Orders.findByIdAndUpdate(ID, { $set: { status: 'Returned' } }, { new: true });
-      for (const product of returnedorder.product) {
+      console.log(returnedorder)
+      for (const product of returnedOrder.product) {
           if (!product.isCancelled) {
               await Product.updateOne(
-                  { _id: product._id },
+                  { _id: product.id },
                   { $inc: { stock: product.quantity } }
               );
 
@@ -438,8 +443,8 @@ const returnOrder = async (req, res) => {
       if (['wallet', 'razorpay'].includes(returnedOrder.paymentMethod)) {
         //   for (const data of returnedOrder.product) {
               //await Product.updateOne({ _id: data._id }, { $inc: { stock: data.quantity } });
-              if(returnedOrder.couponUsed){
-                updatedwallet = returnedOrder.amountAfterDscnt 
+              if(returnedOrder.coupon){
+                updatedwallet = returnedOrder.amountAfterDscnt -50
 
              }
              else{
@@ -453,6 +458,8 @@ const returnOrder = async (req, res) => {
                     updatedwallet -= data.price * data.quantity
                 }
              }
+
+             
               await User.updateOne(
                   { _id: req.session.user._id },
                   { $inc: { wallet: updatedwallet } }

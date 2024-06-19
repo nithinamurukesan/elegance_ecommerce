@@ -518,16 +518,18 @@ const productSearch = async(req, res)=>{
 
 
     const aboutpage = (req, res)=>{
+        const userData = req.session.user
         try {
-            res.render('user/about')
+            res.render('user/about',{userData})
         } catch (error) {
             console.log(error);
         }
     }
 
     const contactpage = (req, res)=>{
+        const userData = req.session.user
         try {
-            res.render('user/contact')
+            res.render('user/contact',{userData})
         } catch (error) {
             console.log(error);
         }

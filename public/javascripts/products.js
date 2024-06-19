@@ -275,14 +275,10 @@ const filteredDataDisplay = (data) => {
                         <input type="hidden" id="name${product._id}" value="${product.name}">
                         <input type="hidden" id="id" value="${product._id}">
                         </h2>
-                        <div class="rating-result" title="90%">
-                            <span>
-                                <span>90%</span>
-                            </span>
-                        </div>
+                        
                         <div class="product-price">
                             <span>₹${product.price}</span>
-                            <span class="old-price">₹245.8</span>
+                            <span class="old-price">${product.price+200}</span>
                         </div>
                         <div class="product-action-1 show">
                             <span id="click${product._id}">

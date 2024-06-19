@@ -237,10 +237,13 @@ app.use(function(req, res, next) {
 
 
 // Catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+// app.use(function(req, res, next) {
+//   next(createError(404));
+// });
 
+app.use(function(req, res, next) {
+  res.status(404).render('404',{ layout:'404layout' });
+});
 
 // Error handler middleware
 app.use((err, req, res, next) => {
