@@ -46,6 +46,8 @@ const loadHome = async(req, res)=>{
 const getProduct = async (req, res) => {
     const user = req.session.user;
 
+    
+
     try {
         let page = 1; // Initial page is always 1 for the GET request
         const limit = 6;
