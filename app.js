@@ -106,20 +106,18 @@ Handlebars.registerHelper('ifeq', function (a, b, options) {
 
 
   Handlebars.registerHelper('statuchecker',  function (value) {
-      let ct=0
-      let ct2=0
+      let count1=0
+      let count2=0
       let returnct= value.product.forEach((elem)=>{
-          if(elem.isReturned)ct++
+          if(elem.isReturned)count1++
       })
       let returnct2= value.product.forEach((elem)=>{
-          if(elem.isCancelled)ct2++
+          if(elem.isCancelled)count2++
       })
 
       let allCancelled = value.product.every(product => product.isCancelled);
       let allReturned = value.product.every(product => product.isReturned);
-      // if(ct>0 && value.status!=="Returned"){
-      //    let change=   Order.findByIdAndUpdate(value._id, { $set: { status: 'Returned' } }, { new: true });
-      // }
+      
   
       if (value.status === "Delivered") {
           return new Handlebars.SafeString(`
@@ -130,7 +128,7 @@ Handlebars.registerHelper('ifeq', function (a, b, options) {
       } else {
           if (allCancelled || value.status === 'Cancelled') {
               return new Handlebars.SafeString('<span class="badge rounded-pill alert-danger text-danger">Order Cancelled</span>');
-          } else if (ct>0 ) {
+          } else if (count1>0 ) {
               return new Handlebars.SafeString('<span class="badge rounded-pill alert-info text-info">Order Returned</span>');
           } else {
               return new Handlebars.SafeString(`

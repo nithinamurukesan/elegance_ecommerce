@@ -1,28 +1,95 @@
+<!DOCTYPE html>
+<html>
 
+<head>
+	<title>Coupon Adding Form</title>
+	<link rel="stylesheet" type="text/css"
+		href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+	<style type="text/css">
+		body {
+			background-color: #f5f5f5;
+			font-family: Arial, sans-serif;
+		}
 
+		.card {
+			border: none;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			padding: 20px;
+		}
+
+		.card-title {
+			font-size: 1.75rem;
+			font-weight: 700;
+			color: #333;
+		}
+
+		.form-control {
+			border-radius: 5px;
+			border-color: #ccc;
+			box-shadow: none;
+			font-size: 1rem;
+			padding: 1.25rem;
+		}
+
+		.form-control:focus {
+			border-color: #007bff;
+			box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, .25);
+		}
+
+		.form-group label {
+			font-weight: 600;
+			color: #555;
+			margin-bottom: 0.5rem;
+		}
+
+		.btn-primary {
+			background-color: #007bff;
+			border-color: #007bff;
+			font-size: 1.1rem;
+			font-weight: 600;
+			padding: 0.75rem 1.5rem;
+			transition: background-color 0.2s ease, border-color 0.2s ease;
+		}
+
+		.btn-primary:hover,
+		.btn-primary:focus {
+			background-color: #0069d9;
+			border-color: #0062cc;
+			box-shadow: none;
+		}
+
+		.alertAddcoupon {
+			font-size: 0.9rem;
+		}
+
+		.input-group-text {
+			background-color: #f8f9fa;
+			border-radius: 5px;
+			border-color: #ccc;
+		}
+	</style>
+</head>
 
 <aside class="navbar-aside" id="offcanvas_aside">
     <div class="aside-top">
-        <a href="/admin/home" class="brand-wrap">
-            {{!-- <img src="/assetsAdmin/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard"> --}}
-        </a>
+        
+           <a href="/admin/home" class="active"
+                        {{!-- style="font-size: 24px; font-weight: bold; font-family: 'Roboto', sans-serif;">ELEGANCE</a>
+               --}}
         <div>
             <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i>
             </button>
         </div>
-    </div>
+    
     <nav>
         <ul class="menu-aside">
-            <li class="menu-item ">
+            <li class="menu-item">
                 <a class="menu-link" href="/admin/home"> <i class="icon material-icons md-home"></i>
                     <span class="text">Dashboard</span>
                 </a>
             </li>
-            {{!-- <li class="menu-item">
-                <a class="menu-link" href="/admin/viewsalesreport"> <i class="icon material-icons md-home"></i>
-                    <span class="text">Sales Report</span>
-                </a>
-            </li> --}}
+           
             <li class="menu-item ">
                 <a class="menu-link" href="/admin/product"> <i class="icon material-icons md-shopping_bag"></i>
                     <span class="text">Products</span>
@@ -35,7 +102,7 @@
                 </a>
 
             </li>
-           
+            
             <li class="menu-item ">
                 <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-category"></i>
                     <span class="text">Category</span>
@@ -46,7 +113,6 @@
                         <span class="text">Coupons</span>
                     </a>
       </li>
-
       <li class="menu-item ">
                 <a class="menu-link " href="/admin/review"> <i class="icon material-icons md-comment"></i>
                     <span class="text">Reviews</span>
@@ -66,117 +132,109 @@
                     <span class="text"> Logout </span>
                 </a>
             </li>
-            
+          
         </ul>
         
     </nav>
 </aside>
 
-
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Coupon Adding Form</title>
-	<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-	<style type="text/css">
-		body {
-			background-color: #f5f5f5;
-		}
-		.card {
-			border: none;
-			border-radius: 10px;
-			box-shadow: 0 0 10px rgba(0,0,0,0.1);
-		}
-		.card-title {
-			font-size: 1.5rem;
-			font-weight: 600;
-			color: #333;
-		}
-		.form-control {
-			border-radius: 5px;
-			border-color: #ccc;
-			box-shadow: none;
-			font-size: 1rem;
-			padding: 1.5rem;
-			margin-bottom: 1.5rem;
-		}
-		.form-control:focus {
-			border-color: #007bff;
-			box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
-		}
-		.form-group label {
-			font-weight: 500;
-			color: #555;
-			margin-bottom: 0.5rem;
-		}
-		.btn-primary {
-			background-color: #007bff;
-			border-color: #007bff;
-			font-size: 1.1rem;
-			font-weight: 600;
-			padding: .75rem 1.5rem;
-			transition: background-color 0.2s ease, border-color 0.2s ease;
-		}
-		.btn-primary:hover, .btn-primary:focus {
-			background-color: #0069d9;
-			border-color: #0062cc;
-			box-shadow: none;
-		}
-	</style>
-</head>
-
-
 <body>
 	<div class="container">
-	  <div class="row">
-	    <div class="col-md-6 mx-auto mt-5">
-	      <div class="card">
-	        <div class="card-body">
-
-			  <p style="text-align: center; color: green;" class="mt-4">{{couponMsg}}</p>
-			  <p style="text-align: center; color: red;" class="mt-4">{{couponExMsg}}</p>
-
-	          <h2 class="card-title text-center mb-4">Add Coupon</h2>
-	          <form action="/admin/add_coupon" method="post">
-	            <div class="form-group">
-	              <label for="coupon-code">Coupon Code</label>
-	              <input type="text" class="form-control" id="coupon-code" placeholder="Enter coupon code" name="code" required>
-	            </div>
-	            <div class="form-group">
-	              <label for="discount">Discount (%)</label>
-	              <div class="input-group">
-	                <input type="number" class="form-control" id="discount" placeholder="Enter discount amount" name="percent" required>
-	                <div class="input-group-append">
-	                  <span class="input-group-text">%</span>
-	                </div>
-	              </div>
-	            </div>
-	            <div class="form-group">
-	              <label for="min-purchase">Minimum Purchase Amount</label>
-	              <input type="number" class="form-control" id="min-purchase" placeholder="Enter minimum purchase amount" name="minPurchase" >
-	            </div>
-	            <div class="form-group">
-	              <label for="max-discount">Maximum Discount Amount</label>
-	              <input type="number" class="form-control" id="max-discount" placeholder="Enter maximum discount amount" name="maxDiscount" >
-	            </div>
-	            <div class="form-group">
-	              <label for="expiry-date">Expiry Date</label>
-	              <input type="date" class="form-control" id="expiry-date" name="expDate" required>
-	            </div>
-	            <div class="form-group text-center">
-	              <button type="submit" class="btn btn-primary">Add Coupon</button>
-	            </div>
-	          </form>
-	        </div>
-	      </div>
-	    </div>
-	  </div>
+		<div class="row">
+			<div class="col-md-6 mx-auto mt-5">
+				<div class="card">
+					<div class="card-body">
+						<p style="text-align: center; color: green;" class="mt-4">{{couponMsg}}</p>
+						<p style="text-align: center; color: red;" class="mt-4">{{couponExMsg}}</p>
+						<h2 class="card-title text-center mb-4">Add Coupon</h2>
+						<form action="/admin/add_coupon" onsubmit="return validationf(this)" method="post">
+							<div class="form-group">
+								<label for="coupon-code">Coupon Code</label>
+								<input type="text" class="form-control" id="coupon-code" placeholder="Enter coupon code"
+									name="code">
+								<h6 class="alertAddcoupon mt-1" style="color: red" id="couponcodealert"></h6>
+							</div>
+							<div class="form-group">
+								<label for="discount">Discount (%)</label>
+								<div class="input-group">
+									<input type="number" class="form-control" id="discount"
+										placeholder="Enter discount amount" name="percent">
+									<div class="input-group-append">
+										<span class="input-group-text">%</span>
+									</div>
+								</div>
+								<h6 class="alertAddcoupon mt-1" style="color: red" id="discountalert"></h6>
+							</div>
+							<div class="form-group">
+								<label for="min-purchase">Minimum Purchase Amount</label>
+								<input type="number" class="form-control" id="min-purchase"
+									placeholder="Enter minimum purchase amount" name="minPurchase">
+								<h6 class="alertAddcoupon mt-1" style="color: red" id="minalert"></h6>
+							</div>
+							<div class="form-group">
+								<label for="max-discount">Maximum Discount Amount</label>
+								<input type="number" class="form-control" id="max-discount"
+									placeholder="Enter maximum discount amount" name="maxDiscount">
+								<h6 class="alertAddcoupon mt-1" style="color: red" id="maxalert"></h6>
+							</div>
+							<div class="form-group">
+								<label for="expiry-date">Expiry Date</label>
+								<input type="date" class="form-control" id="expiry-date" name="expDate" required>
+							</div>
+							<div class="form-group text-center">
+								<button type="submit" class="btn btn-primary">Add Coupon</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </body>
 
+</html>
 
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm"></script>
+<script>
+	function validationf(form) {
+		let errors = []
 
+		let couponcode = document.getElementById('coupon-code').value
+		let discount = document.getElementById('discount').value
+		let minpurchase = document.getElementById('min-purchase').value
+		let maxdiscount = document.getElementById('max-discount').value
 
-	<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm"></script>
+		let couponcodePattern = /^[A-Za-z0-9]{3,}$/;
 
+		let couponerr = document.getElementById('couponcodealert')
+		let discounterr = document.getElementById('discountalert')
+		let minerror = document.getElementById('minalert')
+		let maxerror = document.getElementById('maxalert')
+
+		if (!couponcode.match(couponcodePattern)) {
+			errors.push('Coupon code is not valid')
+		}
+
+		if (discount < 0 || discount > 100) {
+			errors.push('Give discount percentage below 100 and greater than zero')
+		}
+		if (minpurchase < 0) {
+			errors.push('Give a positive price value for minimum purchase')
+		}
+		if (maxdiscount < 0) {
+			errors.push('Give a positive price value for maximum discount')
+		}
+
+		if (errors.length > 0) {
+			couponerr.innerHTML = errors.includes('Coupon code is not valid') ? 'Coupon code is not valid' : "";
+			discounterr.innerHTML = errors.includes('Give discount percentage below 100 and greater than zero') ? 'Give discount percentage below 100 and greater than zero' : "";
+			minerror.innerHTML = errors.includes('Give a positive price value for minimum purchase') ? 'Give a positive price value for minimum purchase' : "";
+			maxerror.innerHTML = errors.includes('Give a positive price value for maximum discount') ? 'Give a positive price value for maximum discount' : "";
+
+			return false
+		}
+
+		return true;
+	}
+</script>

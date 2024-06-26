@@ -1,4 +1,5 @@
 
+
 const today = new Date().toISOString().split('T')[0];
 const tomorrow = new Date();
 tomorrow.setDate(tomorrow.getDate());
@@ -25,7 +26,6 @@ endDateField.addEventListener("change", function () {
 const getSalesData = async() => {
 const startDate = document.getElementById('start-date').value
 const endDate =document.getElementById('end-date').value
- console.log(startDate, endDate) 
 
 
 
@@ -91,23 +91,6 @@ const salesReportTemplate = `
 
 
 
-// Define function to render template with data
-// function renderSalesReport(data) {
-//   const compiledTemplate = Handlebars.compile(salesReportTemplate);
-//   const salesReportHTML = compiledTemplate({ data: data });
-//   document.getElementById('table').innerHTML = salesReportHTML
-
-//   $(document).ready( function () {
-//     $('#my-table').DataTable({
-//       dom: 'Bfrtip',
-//           buttons: [
-//               'excelHtml5',
-//               'pdfHtml5'
-//       ]
-//     });
-//   } );
-// }
-
 
 
 
@@ -160,35 +143,9 @@ function renderSalesReport(data) {
  })
 
    const data = await response.json() 
-   console.log(data)
 
    if (data) {
-    console.log(data.orders);
     
     renderSalesReport(data);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

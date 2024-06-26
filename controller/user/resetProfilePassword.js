@@ -6,27 +6,7 @@ const argon = require('argon2');
 let otp;
 let email;
 
-/////////render forgot otp mail page
 
-// const submitMailProfile= async(req,res)=>{
-//     try {
-
-//         const mailError='Invalid User'
-//         if (req.session.mailError) {
-//             res.render('user/userResetPassword/mailSubmit',{mailError})
-//             req.session.mailError=false
-
-            
-//         } else {
-//             res.render('user/userResetPassword/mailSubmit')
-            
-//         }
-        
-        
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
 
 ///// submit forgot password request
 
@@ -35,10 +15,8 @@ const submitMailPostProfile=async(req,res)=>{
         const user=req.session.user;
         const userMail=user.email
         const userData=await User.findOne({email:userMail}).lean()
-        console.log(userData)
         if(userData){
             otp=await userHelper.verifyEmail(userMail)
-            console.log(otp)
             res.redirect('/profileOtp')
         }else{
             req.session.mailError=true
@@ -57,7 +35,7 @@ const forgotOtppageProfile=async(req,res)=>{
         let otpErr = 'Incorrect otp..!!';
 
         if (req.session.otpErr) {
-            console.log("OTP Error:", req.session.otpErr); // Debugging statement
+            console.log("OTP Error:", req.session.otpErr); 
             res.render('user/userResetPassword/submitOtp', { otpErr });
         } else {
             res.render('user/userResetPassword/submitOtp');
@@ -69,8 +47,6 @@ const forgotOtppageProfile=async(req,res)=>{
 const forgotOtpSubmitProfile=async(req,res)=>{
     let enteredOtp = req.body.otp;
 
-    console.log("Entered OTP:", enteredOtp); // Debugging statement
-    console.log("Stored OTP:", otp); // Debugging statement
 
     if (enteredOtp === otp) {
         res.json({ success: true, redirectUrl: '/profileResetPassword' });
@@ -102,7 +78,7 @@ const resetPasswordProfile=async(req,res)=>{
         const userMail=user.email
         const newPassword  = req.body.password
         const hashedPassword = await userHelper.hashPassword(newPassword)
-        //hashedPassword = await userHelper.hashpassword(req.body.password);
+        
 
         await User.updateOne({ email: userMail }, { $set: { password: hashedPassword } });
         req.session.newPas = true;

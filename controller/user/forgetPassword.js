@@ -12,6 +12,7 @@ let email
 
 ////  To get email enter page for forget password //// 
 
+
  const submitMail  = (req, res) => {
     try {
         const mailError = 'Invalid user'
@@ -34,14 +35,14 @@ let email
 
  const submitMailPost = async(req, res) => {
     try {
-        console.log(req.body);
+        
         email  = req.body.email 
         const userDetails  = await User.findOne({email:email})
 
         if(userDetails){
             otp = await userHelper.verifyEmail(email)
             res.redirect('/otp')
-            // res.render('user/forgetPassword/submitOtp')
+            
         }else{
             req.session.mailError = true
             res.redirect('/forget_passsword')
@@ -85,7 +86,7 @@ const submitOtpPost = (req, res) => {
 
         otpError = 'incorrect otp';
 
-        // Send JSON response with error message
+       
         res.json({ error: otpError });
        
     }

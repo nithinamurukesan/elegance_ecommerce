@@ -94,7 +94,6 @@ const myOrders = async (req, res) => {
           return { ...order.toObject(), date: formattedDate }
       })
 
-      console.log(formattedOrders);
 
       res.render('user/my_orders', {
           userData,
@@ -127,7 +126,6 @@ const filterOrders = async (req, res) => {
         return { ...order.toObject(), date: formattedDate }
     })
 
-    console.log(formattedOrders);
 
     res.json(formattedOrders)
 
@@ -164,8 +162,8 @@ const filterOrders = async (req, res) => {
 
 const orderDetails = async (req, res) => {
   try {
-      let ct = 0
-      let ct2 = 0
+      let count1 = 0
+      let count2= 0
       const orderId = req.query.id;
       const user = req.session.user;
       const userId = user._id;
@@ -178,15 +176,14 @@ const orderDetails = async (req, res) => {
 
       // Retrieve order details including populated address
       const myOrderDetails = await Orders.findById(orderId).populate('address').lean();
-      console.log(myOrderDetails)
       // let hasReturnedItems = myOrderDetails.product.some(product => product.isReturned);
       // let allCancelled = myOrderDetails.product.every(product => product.isCancelled);
       // let allReturned = myOrderDetails.product.every(product => product.isReturned);
       await myOrderDetails.product.forEach((product) => {
           if (product.isReturned) {
-              ct++
+              count1++
           }
-          if (product.isCancelled) ct2++
+          if (product.isCancelled) count2++
       })
       let check = function (a, b) {
           if (a + b === myOrderDetails.product.length) {
@@ -196,11 +193,11 @@ const orderDetails = async (req, res) => {
           }
       }
 
-      if (check(ct, ct2) && ct>0  && myOrderDetails.status !== "Returned") {
+      if (check(count1, count2) && count1>0  && myOrderDetails.status !== "Returned") {
           await Orders.findByIdAndUpdate(myOrderDetails._id, { $set: { status: 'Returned' } }, { new: true });
           myOrderDetails.status = "Returned";
       }
-          if(check(ct2,ct) &&ct==0 &&ct2>0 && myOrderDetails.status !== "Cancelled"){
+          if(check(count2,count1) &&count1==0 &&count2>0 && myOrderDetails.status !== "Cancelled"){
               await Orders.findByIdAndUpdate(myOrderDetails._id, { $set: { status: 'Cancelled' } }, { new: true });
               myOrderDetails.status = "Cancelled";
           }
@@ -237,9 +234,9 @@ const orderDetails = async (req, res) => {
       //console.log("orderedProDet:", orderedProDet);
       await myOrderDetails.product.forEach((product) => {
         if (product.isReturned) {
-            ct++
+            count1++
         }
-        if (product.isCancelled) ct2++
+        if (product.isCancelled) count2++
         offerprice+= product.price* product.quantity
     })
     offerprice-=myOrderDetails.discountAmt  
@@ -260,10 +257,8 @@ const orderSuccess = async(req, res) => {
     try {
       const userData = req.session.user
       const orderId = req.query.orderID
-      console.log(orderId)
 
       const myOrderDetails = await Orders.findOne({ orderId: orderId }).lean();
-      console.log(myOrderDetails)
       const orderedProDet  = myOrderDetails.product
       const addressId      = myOrderDetails.address
       const formattedDate = moment(myOrderDetails.date).format("MMMM D, YYYY");
@@ -278,47 +273,12 @@ const orderSuccess = async(req, res) => {
  }
 
 
-//  const cancelOrder = async(req, res) => {
-//     try {
-//         const id       = req.query.id
-//         const userData = req.session.user
-//         const userId   =  userData._id
-        
-//         const { updateWallet, payMethod } = req.body
-//         console.log(updateWallet)
 
-//         if(payMethod === 'wallet' || payMethod === 'razorpay'){
-//           await User.findByIdAndUpdate( userId, { $set:{ wallet:updateWallet }}, { new:true })
-//         }
-
-//         await Orders.findByIdAndUpdate(id, { $set: { status: 'Cancelled' } }, { new: true });
-
-//         res.json('sucess')
-//     } catch (error) {
-//         console.log(error);
-//     }
-//  }
-
-
-
- 
-//  const returnOrder = async(req, res) => {
-//     try {
-//         const id = req.query.id
-//         console.log(id)
-//         await Orders.findByIdAndUpdate(id, { $set: { status: 'Returned' } }, { new: true });
-
-//         res.json('sucess')
-//     } catch (error) {
-//         console.log(error);
-//     }
-//  }
 
 
 const cancelOrder = async (req, res) => {
   try {
       const id = req.params.id;
-      console.log(id);
 
       if (!mongoose.Types.ObjectId.isValid(id)) {
           return res.status(400).json({ error: 'Invalid order ID' });
@@ -329,7 +289,6 @@ const cancelOrder = async (req, res) => {
       let updatedwallet=0;
 
       let canceledOrder = await Orders.findOne({ _id: ID });
-      console.log(canceledOrder)
 
       if (!canceledOrder) {
           return res.status(404).json({ error: 'Order not found' });
@@ -338,7 +297,6 @@ const cancelOrder = async (req, res) => {
       await Orders.updateOne({ _id: ID }, { $set: { status: 'Cancelled' } });
 
       for (const product of canceledOrder.product) {
-        console.log(canceledOrder.product)
           if (!product.isCancelled) {
             console.log("i am from product in update section")
               await Product.updateOne(
@@ -359,7 +317,6 @@ const cancelOrder = async (req, res) => {
       if (['wallet', 'razorpay'].includes(canceledOrder.paymentMethod)) {
           //for (const data of canceledOrder) {
               //await Product.updateOne({ _id: data._id }, { $inc: { stock: data.quantity } });
-              console.log(canceledOrder.amountAfterDscnt)
               if(canceledOrder.coupon){
                  updatedwallet = canceledOrder.amountAfterDscnt -50
 
@@ -375,7 +332,6 @@ const cancelOrder = async (req, res) => {
                     updatedwallet -= data.price * data.quantity
                 }
              }
-             console.log(updatedwallet, "updated after review")
               await User.updateOne(
                   { _id: req.session.user._id },
                   { $inc: { wallet:  updatedwallet} }
@@ -421,10 +377,8 @@ const returnOrder = async (req, res) => {
       let updatedwallet=0;
 
       let returnedOrder = await Orders.findOne({ _id: ID }).lean();
-      console.log(returnedOrder, "returnedOrder")
 
       const returnedorder = await Orders.findByIdAndUpdate(ID, { $set: { status: 'Returned' } }, { new: true });
-      console.log(returnedorder)
       for (const product of returnedOrder.product) {
           if (!product.isCancelled) {
               await Product.updateOne(
@@ -495,7 +449,6 @@ const returnOrder = async (req, res) => {
 const cancelOneProduct = async (req, res) => {
   try {
       const { id, prodId } = req.body;
-      console.log(id, prodId)
 
       if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(prodId)) {
           return res.status(400).json({ error: 'Invalid order or product ID' });
@@ -559,9 +512,7 @@ const cancelOneProduct = async (req, res) => {
 };
 const returnOneProduct = async (req, res) => {
   try {
-    console.log("-----------------------------start")
       const { id, prodId } = req.body;
-      console.log(id, prodId)
 
       if (!mongoose.Types.ObjectId.isValid(id) || !mongoose.Types.ObjectId.isValid(prodId)) {
           return res.status(400).json({ error: 'Invalid order or product ID' });
@@ -588,7 +539,6 @@ const returnOneProduct = async (req, res) => {
       const productQuantity = result.product[0].quantity;
 
       const productprice = result.product[0].price * productQuantity
-      console.log(productQuantity,productprice,"productpriceproductpriceproductprice")
 
       await Product.findOneAndUpdate(
           { _id: PRODID },
@@ -614,7 +564,6 @@ const returnOneProduct = async (req, res) => {
               }
           }
       );
-      console.log("-----------------------------end")
 
       res.json({
           success: true,
@@ -656,7 +605,6 @@ const getInvoice = async (req, res) => {
         tax: product.tax,
         price: product.price,
       }));
-      console.log(products)
   
       const date = moment(order.date).format('MMMM D, YYYY');
       
@@ -711,7 +659,6 @@ const getInvoice = async (req, res) => {
        
       };
   
-      console.log(data)
   
   easyinvoice.createInvoice(data, function (result) {
   

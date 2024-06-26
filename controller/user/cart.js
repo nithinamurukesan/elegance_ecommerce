@@ -30,7 +30,7 @@ const addToCart = async (req, res) => {
         res.json({message : 'Item alredy in cart'})
      
     } else {
-         await Product.findByIdAndUpdate(proId,  {isOnCart: true})
+        //  await Product.findByIdAndUpdate(proId,  {isOnCart: true})
          await User.findByIdAndUpdate( userId,
         { $push: { cart: {product: product._id,}}},
         { new: true }
@@ -58,7 +58,7 @@ const loadCart = async (req, res) => {
 
 
     const user = await User.findOne({ _id: userId }).populate('cart.product').lean()
-    const cart = user.cart; // Get the 'cart' array from the user document
+    const cart = user.cart; 
 
 
      let subTotal = 0
@@ -84,14 +84,8 @@ const removeCart = async (req, res) => {
  try {
   const userData = req.session.user
   const userId   = userData._id
-  const proId    = req.query.proId
+  
   const cartId   = req.query.cartId
-
-  await Product.findOneAndUpdate(
-    { _id: proId },
-    { $set: { isOnCart: false } },
-    { new: true }
-  );
   
  await User.updateOne({_id: userId}, {$pull: {cart: {_id: cartId}}})
 
@@ -111,7 +105,10 @@ const updateCart = async (req, res)=>{
 
     data[0].cart.forEach((val,i)=>{
       val.quantity = req.body.datas[i].quantity
+      
     })
+    
+   
 
     await User.updateOne({_id:userData._id},{$set:{cart:data[0].cart}})
     res.json('from backend ,cartUpdation json')
@@ -133,7 +130,6 @@ module.exports = {
   addToCart,
   loadCart, 
   removeCart,
-  // cartUpdation,
   updateCart,
   
 };

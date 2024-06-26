@@ -65,11 +65,7 @@
                                         <td class="action" data-title="Remove"><a onclick="removeCartalert('{{this.product._id}}')" class="text-muted"><i class="fi-rs-trash"></i></a></td>
                                     </tr>
                                     {{/each}}
-                                    {{!-- <tr>
-                                        <td colspan="6" class="text-end">
-                                            <a onclick="removeCartalert('{{this.product._id}}')" class="text-muted"> </a>
-                                        </td>
-                                    </tr> --}}
+                                    
                                 </tbody>
                             </table>
                         </div>
@@ -210,7 +206,6 @@
 	const proId = document.getElementById('product_id'+idd).value
 	const cartId = document.getElementsByName('cart_id')[0].value
 
-	console.log(proId, 'pro iddddddddddddd', cartId , 'cart idddddddddddd')
 
 	const id = {proId : proId, cartId : cartId}
 
@@ -227,8 +222,10 @@
   if (result.isConfirmed) {
 	addToWishlist(proId)
     removeFromCart(proId, cartId)
+    location.reload()
   } else if (result.dismiss === Swal.DismissReason.cancel) {
 	removeFromCart(proId, cartId)
+    location.reload()
     
   }
 }
@@ -244,7 +241,6 @@
     })
 
 	const data = await response.json()
-	console.log(data)
 	swal.fire("Item Removed from cart!", "", "success")
     console.log("I have reached Here")
     document.getElementById('row'+proId).innerHTML = ''	   

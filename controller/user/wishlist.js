@@ -12,7 +12,7 @@ const loadWishlist = async (req, res) => {
   const userData = await User.findById(id).lean();
   try {
 
-    // const userId   = userData._id
+   
     const userId = req.query.id
 
     const user = await User.findById(userId).populate('wishlist').lean()
@@ -25,7 +25,6 @@ const loadWishlist = async (req, res) => {
       if (productExist.length === 0) i.productExistInCart = false
       else i.productExistInCart = true
     }
-    console.log(wishItem)
 
     res.render('user/wishlist', { userData, userId, wishItem })
   } catch (error) {

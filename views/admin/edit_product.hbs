@@ -37,12 +37,12 @@
                 </a>
 
             </li>
-            
+
             <li class="menu-item ">
                 <a class="menu-link" href="/admin/category"> <i class="icon material-icons md-category"></i>
                     <span class="text">Category</span>
                 </a>
-                </li>
+            </li>
             <li class="menu-item">
                 <a class="menu-link" href="/admin/coupons"><i class="icon fa-solid fa-ticket"></i>
                     <span class="text">Coupons</span>
@@ -54,7 +54,7 @@
                 </a>
             </li>
 
-            
+
             <li class="menu-item">
                 <a class="menu-link" href="/admin/manage_users"> <i class="icon material-icons md-person"></i>
                     <span class="text">Users</span>
@@ -67,72 +67,12 @@
                     <span class="text"> Logout </span>
                 </a>
             </li>
-           
+
         </ul>
-        
+
     </nav>
 </aside>
-{{!-- <header class="main-header navbar">
-    <div class="col-search">
-        <form class="searchform">
-            <div class="input-group">
-                <input list="search_terms" type="text" class="form-control" placeholder="Search term">
-                <button class="btn btn-light bg" type="button"> <i class="material-icons md-search"></i></button>
-            </div>
-            <datalist id="search_terms">
-                <option value="Products">
-                <option value="New orders">
-                <option value="Apple iphone">
-                <option value="Ahmed Hassan">
-            </datalist>
-        </form>
-    </div>
-    <div class="col-nav">
-        <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i
-                class="material-icons md-apps"></i> </button>
-        <ul class="nav">
-            <li class="nav-item">
-                <a class="nav-link btn-icon" href="#">
-                    <i class="material-icons md-notifications animation-shake"></i>
-                    <span class="badge rounded-pill">3</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
-            </li>
-            <li class="dropdown nav-item">
-                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
-                    aria-expanded="false"><i class="material-icons md-public"></i></a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                    <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png"
-                            alt="English">English</a>
-                    <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png"
-                            alt="Français">Français</a>
-                    <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
-                    <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
-                </div>
-            </li>
-            <li class="dropdown nav-item">
-                <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
-                    aria-expanded="false"> <img class="img-xs rounded-circle" src="assets/imgs/people/avatar2.jpg"
-                        alt="User"></a>
-                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                    <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
-                    <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
-                    <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
-                    <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
-                    <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item text-danger" href="#"><i
-                            class="material-icons md-exit_to_app"></i>Logout</a>
-                </div>
-            </li>
-        </ul>
-    </div>
-</header> --}}
+
 <main class="main-wrap">
 
     <section class="content-main">
@@ -193,25 +133,21 @@
                                 <div class="col-lg-4">
                                     <label class="form-label">Category:</label>
                                     <select name="category" id="category" class="form-select">
+                                        <option value="{{this._id}}" selected>{{proData.category.category}}</option>
+
                                         {{#each catogories}}
+                                        {{#unless proData.category.category}}
+                                        {{!-- {{#ifeq proData.category.category this.category}} --}}
+                                        {{!-- {{else}} --}}
                                         <option value="{{this._id}}">{{this.category}}</option>
+                                        {{/unless}}
+                                        {{!-- {{/ifeq}} --}}
                                         {{/each}}
                                     </select>
                                 </div>
 
 
-                                {{!-- <div class="col-lg-3">
-                                    <div class="form-element m-2">
-                                        <input type="file" id="file-1" name="image" accept="image/*">
-                                        <label for="file-1" id="file-1-preview">
-                                            <img src="/assetsAdmin/imgs/theme/upload.svg" alt="">
-                                            <div>
-                                                <span>+</span>
-                                            </div>
-                                        </label>
-                                    </div> <!-- card end// -->
 
-                                </div> --}}
 
                             </div>
                             <div class="form-group">
@@ -231,7 +167,7 @@
 
                                     {{/each}}
                                 </div>
-                                
+
                             </div>
                             <div class="row">
                                 <div class="col-lg-4">
@@ -239,91 +175,86 @@
                                         <label class="form-label">Image 1</label>
                                         <div class="input-group">
                                             <input class="form-control" type="file" name="image" id="input1"
-                                                accept="image/png, image/jpeg, image/jpg" 
-                                                onchange="viewImage1(event),viewImage(event, 1)"/>
-                                                <label for="input1" id="file-1-preview">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView1">
+                                                accept="image/png, image/jpeg, image/jpg"
+                                                onchange="viewImage1(event),viewImage(event, 1)" />
+                                            <label for="input1" id="file-1-preview">
+                                                <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView1">
                                         </div>
                                         <div class="image-cropper" style="display: none; width: 200px; height: 250px;">
                                             <img src="" id="croppedImg1" alt="" />
-                                            <button type="button" id="saveButton1"
-                                                class="btn btn-primary">Save</button>
+                                            <button type="button" id="saveButton1" class="btn btn-primary">Save</button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Repeat the above code for Image 2 to Image 5 with appropriate IDs -->
-                                                                <div class="col-lg-4">
+                                <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Image 2</label>
                                         <div class="input-group">
                                             <input class="form-control" type="file" name="image" id="input2"
-                                                accept="image/png, image/jpeg, image/jpg" 
-                                                onchange="viewImage1(event),viewImage(event, 2)"/>
-                                                <label for="input1" id="file-2-preview">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView2">
+                                                accept="image/png, image/jpeg, image/jpg"
+                                                onchange="viewImage1(event),viewImage(event, 2)" />
+                                            <label for="input1" id="file-2-preview">
+                                                <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView2">
                                         </div>
                                         <div class="image-cropper" style="display: none; width: 200px; height: 250px;">
                                             <img src="" id="croppedImg2" alt="" />
-                                            <button type="button" id="saveButton2"
-                                                class="btn btn-primary">Save</button>
+                                            <button type="button" id="saveButton2" class="btn btn-primary">Save</button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Repeat the above code for Image 2 to Image 5 with appropriate IDs -->
-                                                                <div class="col-lg-4">
+                                <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Image 3</label>
                                         <div class="input-group">
                                             <input class="form-control" type="file" name="image" id="input3"
-                                                accept="image/png, image/jpeg, image/jpg" 
-                                                onchange="viewImage1(event),viewImage(event, 3)"/>
-                                                <label for="input1" id="file-3-preview">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView3">
+                                                accept="image/png, image/jpeg, image/jpg"
+                                                onchange="viewImage1(event),viewImage(event, 3)" />
+                                            <label for="input1" id="file-3-preview">
+                                                <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView3">
                                         </div>
                                         <div class="image-cropper" style="display: none; width: 200px; height: 250px;">
                                             <img src="" id="croppedImg3" alt="" />
-                                            <button type="button" id="saveButton3"
-                                                class="btn btn-primary">Save</button>
+                                            <button type="button" id="saveButton3" class="btn btn-primary">Save</button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Repeat the above code for Image 2 to Image 5 with appropriate IDs -->
-                                                               <div class="col-lg-4">
+                                <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Image 4</label>
                                         <div class="input-group">
                                             <input class="form-control" type="file" name="image" id="input4"
-                                                accept="image/png, image/jpeg, image/jpg" 
-                                                onchange="viewImage1(event),viewImage(event, 4)"/>
-                                                <label for="input1" id="file-4-preview">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView4">
+                                                accept="image/png, image/jpeg, image/jpg"
+                                                onchange="viewImage1(event),viewImage(event, 4)" />
+                                            <label for="input1" id="file-4-preview">
+                                                <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView4">
                                         </div>
                                         <div class="image-cropper" style="display: none; width: 200px; height: 250px;">
                                             <img src="" id="croppedImg4" alt="" />
-                                            <button type="button" id="saveButton4"
-                                                class="btn btn-primary">Save</button>
+                                            <button type="button" id="saveButton4" class="btn btn-primary">Save</button>
                                         </div>
                                     </div>
                                 </div>
 
                                 <!-- Repeat the above code for Image 2 to Image 5 with appropriate IDs -->
-                                                                <div class="col-lg-4">
+                                <div class="col-lg-4">
                                     <div class="mb-4">
                                         <label class="form-label">Image 5</label>
                                         <div class="input-group">
                                             <input class="form-control" type="file" name="image" id="input5"
-                                                accept="image/png, image/jpeg, image/jpg" 
-                                                onchange="viewImage1(event),viewImage(event, 5)"/>
-                                                <label for="input1" id="file-5-preview">
-                                            <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView5">
+                                                accept="image/png, image/jpeg, image/jpg"
+                                                onchange="viewImage1(event),viewImage(event, 5)" />
+                                            <label for="input1" id="file-5-preview">
+                                                <img src="/assets/imgs/theme/upload.svg" alt="" id="imgView5">
                                         </div>
                                         <div class="image-cropper" style="display: none; width: 200px; height: 250px;">
                                             <img src="" id="croppedImg5" alt="" />
-                                            <button type="button" id="saveButton5"
-                                                class="btn btn-primary">Save</button>
+                                            <button type="button" id="saveButton5" class="btn btn-primary">Save</button>
                                         </div>
                                     </div>
                                 </div>
@@ -337,7 +268,7 @@
 
 
 
-                            
+
 
 
                             <div class="d-flex g-2">
@@ -397,86 +328,86 @@
 
 <script>
 
-   function viewImage1(event) {
-    let file = event.target.files[0];
+    function viewImage1(event) {
+        let file = event.target.files[0];
 
-    // Check file size
-    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-    if (file.size > maxSize) {
-        alert("File size exceeds the maximum limit of 5MB.");
-        event.target.value = ""; // Clear the file input
-        return;
-    }
-
-       const allowedExtensions = /\.(jpg|jpeg|png|gif)$/i;
-        if (!allowedExtensions.test(file.name)) {
-            alert('Please upload file having extensions .jpeg/.jpg/.png/.gif only.');
-             event.target.value = ""; // Clear the file input
+        // Check file size
+        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+        if (file.size > maxSize) {
+            alert("File size exceeds the maximum limit of 5MB.");
+            event.target.value = ""; // Clear the file input
             return;
         }
-        
+
+        const allowedExtensions = /\.(jpg|jpeg|png|gif)$/i;
+        if (!allowedExtensions.test(file.name)) {
+            alert('Please upload file having extensions .jpeg/.jpg/.png/.gif only.');
+            event.target.value = ""; // Clear the file input
+            return;
+        }
+
         let url = URL.createObjectURL(file);
 
 
 
-    document.getElementById('imgView1').src = URL.createObjectURL(file);
-}
-
-function viewImage(event, index) {
-    let input = event.target;
-    let file = input.files[0];
-
-    // Check file size
-    const maxSize = 5 * 1024 * 1024; // 5MB in bytes
-    if (file.size > maxSize) {
-        alert("File size exceeds the maximum limit of 5MB.");
-        input.value = ""; // Clear the file input
-        return;
+        document.getElementById('imgView1').src = URL.createObjectURL(file);
     }
 
-    let reader = new FileReader();
+    function viewImage(event, index) {
+        let input = event.target;
+        let file = input.files[0];
 
-    reader.onload = function () {
-        let dataURL = reader.result;
-        let image = document.getElementById('imgView' + index);
-        image.src = dataURL;
+        // Check file size
+        const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+        if (file.size > maxSize) {
+            alert("File size exceeds the maximum limit of 5MB.");
+            input.value = ""; // Clear the file input
+            return;
+        }
 
-        // Initialize Cropper.js on the image
-        let cropper = new Cropper(image, {
-            aspectRatio: 1 / 1, // Initial aspect ratio
-            viewMode: 1,
-            guides: true,
-            background: false,
-            autoCropArea: 1,
-            zoomable: true
-        });
+        let reader = new FileReader();
 
-        // Show the image cropper container
-        let cropperContainer = document.querySelector('#croppedImg' + index).parentNode;
-        cropperContainer.style.display = 'block';
+        reader.onload = function () {
+            let dataURL = reader.result;
+            let image = document.getElementById('imgView' + index);
+            image.src = dataURL;
 
-        // Update the cropped image when the "Save" button is clicked
-        let saveButton = document.querySelector('#saveButton' + index);
-        saveButton.addEventListener('click', async function () {
-            let croppedCanvas = cropper.getCroppedCanvas();
-            let croppedImage = document.getElementById("croppedImg" + index);
-            croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
-
-            // Generate a unique name for the cropped image file based on the current timestamp
-            let timestamp = new Date().getTime();
-            let fileName = `cropped-img-${timestamp}-${index}.png`;
-
-            await croppedCanvas.toBlob(blob => {
-                let imgFile = new File([blob], fileName, { type: "image/png" });
-                const fileList = new DataTransfer();
-                fileList.items.add(imgFile);
-                input.files = fileList.files;
+            // Initialize Cropper.js on the image
+            let cropper = new Cropper(image, {
+                aspectRatio: 1 / 1, // Initial aspect ratio
+                viewMode: 1,
+                guides: true,
+                background: false,
+                autoCropArea: 1,
+                zoomable: true
             });
-            // cropperContainer.style.display = 'none';
-        });
-    };
-    reader.readAsDataURL(file);
-}
+
+            // Show the image cropper container
+            let cropperContainer = document.querySelector('#croppedImg' + index).parentNode;
+            cropperContainer.style.display = 'block';
+
+            // Update the cropped image when the "Save" button is clicked
+            let saveButton = document.querySelector('#saveButton' + index);
+            saveButton.addEventListener('click', async function () {
+                let croppedCanvas = cropper.getCroppedCanvas();
+                let croppedImage = document.getElementById("croppedImg" + index);
+                croppedImage.src = croppedCanvas.toDataURL('image/jpeg', 1.0);
+
+                // Generate a unique name for the cropped image file based on the current timestamp
+                let timestamp = new Date().getTime();
+                let fileName = `cropped-img-${timestamp}-${index}.png`;
+
+                await croppedCanvas.toBlob(blob => {
+                    let imgFile = new File([blob], fileName, { type: "image/png" });
+                    const fileList = new DataTransfer();
+                    fileList.items.add(imgFile);
+                    input.files = fileList.files;
+                });
+                // cropperContainer.style.display = 'none';
+            });
+        };
+        reader.readAsDataURL(file);
+    }
 </script>
 
 
@@ -495,7 +426,6 @@ function viewImage(event, index) {
                 const imageElem = document.querySelector(`.pro-image[data-image-index="${imageIndex}"]`);
                 if (imageElem) {
 
-                    console.log(imageElem, 'htttttttttttttttttttttt')
                     // or
                     imageElem.remove(); // remove the image element completely
                 }
@@ -589,7 +519,7 @@ function viewImage(event, index) {
             errors.push("Please Check about Again");
         }
 
-        
+
 
 
 

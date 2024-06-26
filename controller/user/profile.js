@@ -3,11 +3,11 @@ const User    = require('../../model/userModel')
 
 
 
-module.exports = {
+
    
  /// Load Profile/////
 
- loadProfile : async(req, res) => {
+ const loadProfile = async(req, res) => {
     try { 
     const user=req.session.user
     const id = user._id    
@@ -17,13 +17,13 @@ module.exports = {
     } catch (error) {
         console.log(error.message);
         res.status(500).send(" Error");    }
-},
+}
 
 
 /// To get manage address page ///
 
 
- manageAdress : async(req, res) => {
+ const manageAddress = async(req, res) => {
     try {
         const userData = req.session.user
         const id       = userData._id
@@ -33,25 +33,25 @@ module.exports = {
     } catch (error) {
         console.log(error.message);
         res.status(500).send(" Error");    }
-},
+}
 
 
 //// To add new address  ////
 
 
-addNewAddress : (req, res) => {
+const addNewAddress = (req, res) => {
     try {
         res.render('user/add_new_address')
     } catch (error) {
         console.log(error.message);
         res.status(500).send(" Error");    }
-},
+}
 
 
 //// To add new address ////
 
 
-addNewAddressPost: async(req, res) => {
+const addNewAddressPost = async(req, res) => {
     try {
         const userData = req.session.user
         const id       = userData._id
@@ -73,26 +73,25 @@ addNewAddressPost: async(req, res) => {
     } catch (error) {
         console.log(error.message);
         res.status(500).send(" Error");    }
-},
+}
 
 
-editAddress : async (req, res) => {
+const editAddress = async (req, res) => {
     try {
 
         const id = req.params.id
 
         const address = await Address.findById(id);
         const addressObject = address.toObject();
-        console.log(address)
 
         res.render('user/editAddress',{ address:addressObject })
     } catch (error) {
         console.log(error.message);
         res.status(500).send(" Error");    }
-},
+}
 
 
-editAddressPost : async (req, res) => {
+const editAddressPost = async (req, res) => {
     try {
 
         const id = req.params.id
@@ -110,19 +109,17 @@ editAddressPost : async (req, res) => {
 
         res.redirect('/adresses')
         
-        // Find user addresses
-        // const userAddresses = await Address.find({ userId: id }).lean();
-        // res.render('user/editAddress')
+        
     } catch (error) {
         console.log(error.message);
         res.status(500).send(" Error");    }
-},
+}
 
 
 ///// Edit user details  //////
 
 
-editDetails: (req, res) => {
+const editDetails = (req, res) => {
 
     try {
         const userData = req.session.user
@@ -130,13 +127,13 @@ editDetails: (req, res) => {
     } catch (error) {
         console.log(error.message);
         res.status(500).send(" Error");    }
-},
+}
 
 
 /// Update edited user details  ////
 
 
-updateDetails: async (req, res) => {
+const updateDetails = async (req, res) => {
     try {
         const id = req.params.id
 
@@ -151,12 +148,12 @@ updateDetails: async (req, res) => {
     } catch (error) {
         console.log(error.message);
         res.status(500).send(" Error");    }   
- },
+ }
 
 
 ///// To delete addresss  ////
 
- deleteAddress: async(req, res) => {
+ const deleteAddress = async(req, res) => {
     try {
         const id = req.params.id
 
@@ -165,7 +162,23 @@ updateDetails: async (req, res) => {
     } catch (error) {
         console.log(error.message);
         res.status(500).send(" Error");    }
- },
+ }
+
+ module.exports = {
+    loadProfile,
+    manageAddress,
+    addNewAddress,
+    addNewAddressPost,
+    editAddress,
+    editAddressPost,
+    editDetails,
+    updateDetails,
+    deleteAddress
+
+
+
+
+
+ }
 
  
-}

@@ -81,7 +81,7 @@
                 <div class="card-body">
                    
                <!---category tab-->
-           {{#each allCtegoryData}}
+           {{#each allCategoryData}}
                     <article class="itemlist">
                         <div class="row align-items-center">
                             <div class="col col-check flex-grow-0">
@@ -156,63 +156,6 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-////////////delete product
-        $(document).ready(function () {
-        $(document).on('click','#deleteprod',function(e){
-            e.preventDefault();
-            var id = $(this).data('product-id');
-            //var wishId = $(this).data('whishlist-id'); // Corrected variable name to wishId
-
-            // Store reference to $(this) in a variable for use inside AJAX success and error callbacks
-            var $this = $(this);
-
-            Swal.fire({
-                title: "Are you sure?",
-                text: "You won't be able to revert this!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#088178",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '/admin/delete_product',
-                        contentType: 'application/json',
-                        data: JSON.stringify({ id: id }),
-                        success: function (productData) {
-                            console.log("Product removed from Cart successfully");
-                            // If you want to remove the row from the table upon successful removal
-                            $this.closest('tr').remove(); // Use $this instead of $(this)
-                            // swal("Removed from wishlist", "The product has been removed from your wishlist.", "success");
-                            {
-                                Swal.fire({
-                                    title: 'Removed!',
-                                    text: 'Product Succesfully Removed from Cart!!!',
-                                    icon: 'success',
-                                    confirmButtonText: 'Cool'
-                                })
-                            }
-
-
-                        },
-                        error: function (xhr, status, error) {
-                            console.error("Error removing product from wishlist:", error);
-                            swal("Error", "Something went wrong. Please try again later.", "error");
-                        }
-                    });
-                    Swal.fire({
-                        title: "Deleted!",
-                        text: "Your file has been deleted.",
-                        icon: "success"
-                    });
-                }
-            });
-
-
-        });
-    });
 
 
     /////block product
@@ -265,7 +208,7 @@
                         title: "Done!",
                         text: "Your file has been deleted.",
                         icon: "success"
-                    });
+                    }).then(()=> window.location.reload())
                 }
             });
 

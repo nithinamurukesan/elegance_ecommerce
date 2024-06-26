@@ -73,19 +73,17 @@ const checkStock = async (req, res) => {
   };
   
 
-const loadCheckou = async (req, res) => {
+const loadCheckoutpage = async (req, res) => {
 
     const userData = req.session.user
     const userId   = userData._id
 
-    console.log(userData.wallet, 'hiiii am from checkout walletttttttttttttttttt');
 
     const addressData = await Address.find({userId : userId})
 
     const userDataa  = await User.findOne({ _id: userId }).populate("cart.product").lean()
     const cart       = userDataa.cart
 
-    console.log(cart, 'cart aaaannnnnnnnnnnnnnn')
 
     let subTotal = 0
     cart.forEach((val)=>{
@@ -94,19 +92,16 @@ const loadCheckou = async (req, res) => {
     })
 
     let stock = []
-      cart.forEach((el) => {
-      if((el.product.stock - el.quantity) <= 0){
-        stock.push(el.product)
+      cart.forEach((elem) => {
+      if((elem.product.stock - elem.quantity) <= 0){
+        stock.push(elem.product)
       }
     })
 
-    console.log(stock, 'stockkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk')
 
     if(stock.length > 0){
-        console.log('njana res jssonnnnnnnnnnnnnnnnnnnnn');
         res.json(stock)
     }else{
-        console.log('heloooooooooo mann am from stock length');
         res.render('user/checkout/checkout', { userData, cart, addressData, subTotal })
     }    
 }
@@ -201,7 +196,7 @@ const placeOrder = async(req, res) => {
 
             await Product.updateOne(
                 { _id: productId },
-                { $set: { stock: updatedStock, isOnCart: false }, $inc: { bestSelling:1} }
+                { $set: { stock: updatedStock}, $inc: { bestSelling:1} }
               );
 
             const populatedProd= await Product.findById(productId).populate("category").lean()
@@ -426,7 +421,9 @@ const addNewAddressPost= async(req, res) => {
 
 
 module.exports = {
+
     loadCheckout,
+    loadCheckoutpage,
     placeOrder,
     // removeCoupon,
     applyCoupon ,

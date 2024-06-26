@@ -11,7 +11,7 @@ let walletpage =async (req,res)=>{
     
     const userData = await User.findById(req.session.user._id).lean();
     try {
-        // const userId = req.query.id
+       
         res.render('user/wallet',{userData ,history:userData.history, KEY_ID : process.env.RAZORPAY_ID})
         
     } catch (error) {
@@ -25,7 +25,6 @@ let walletpage =async (req,res)=>{
 
 let addMoneyToWallet = async (req, res) => {
     try {
-        console.log(req.body)
 
         var options = {
             amount: parseInt(req.body.total) * 100,
@@ -42,7 +41,6 @@ let addMoneyToWallet = async (req, res) => {
             else {
 
                 var amount = order.amount / 100
-                console.log(amount);
                 await User.updateOne(
                     {
                         _id: req.session.user._id
@@ -76,11 +74,9 @@ let addMoneyToWallet = async (req, res) => {
 const verifyPayment = async (req, res) => {
     try {
         let details = req.body
-        console.log(details);
-        // let amount = parseInt(details['order[order][amount]']) / 100
+    
         var amount = parseInt(details.order.order.amount)/100
        
-        console.log(amount,'..............')
         await User.updateOne(
             {
                 _id: req.session.user._id

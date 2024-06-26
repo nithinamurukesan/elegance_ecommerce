@@ -4,7 +4,6 @@ const Category = require('../../model/categoryModel')
 const catFilter = async (req, res) => {
     try {
         const { catId, page } = req.body;
-        console.log(page);
         const limit = 6;
         const skip = (page - 1) * limit;
 

@@ -67,7 +67,7 @@ router.post('/submit_otp', userController.submitOtp)
 router.get('/resend_otp', isLogout, userController.resendOtp)
 
 router.get('/profile', logedin, isBlocked, profile.loadProfile)
-router.get('/adresses', logedin, isBlocked, profile.manageAdress)
+router.get('/adresses', logedin, isBlocked, profile.manageAddress)
 router.get('/add_new_adress', logedin, isBlocked, profile.addNewAddress)
 router.post('/add_new_adress', logedin, isBlocked, profile.addNewAddressPost)
 router.get('/edit_address/:id', logedin, isBlocked, profile.editAddress)
@@ -89,9 +89,7 @@ router.post('/reset_password', forgetPassword.resetPasswordPost)
 
 
 //profile reset password
-// router.get('/profileSubmit_otp', logedin, userController.getOtp)
-// router.post('/profileSubmit_otp', logedin, userController.submitOtp)
-// router.get('/profileResend_otp', logedin, userController.resendOtp)
+
 router.get('/changePassword', logedin, resetProfile.submitMailPostProfile)
 router.get('/profileOtp', logedin, resetProfile.forgotOtppageProfile)
 router.post('/profileOtp', logedin, resetProfile.forgotOtpSubmitProfile)

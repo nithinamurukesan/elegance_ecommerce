@@ -1,24 +1,23 @@
-const Admin       = require("../../model/adminModel");
+const Admin = require("../../model/adminModel");
 const adminHelper = require("../../helpers/admin_helper");
-const User        = require("../../model/userModel");
-const Category    = require("../../model/categoryModel");
-const Product     = require("../../model/productModel");
-const Coupon      = require("../../model/coupon");
-const Orders      = require("../../model/order");
-const Address     = require("../../model/address");
+const User = require("../../model/userModel");
+const Category = require("../../model/categoryModel");
+const Product = require("../../model/productModel");
+const Coupon = require("../../model/coupon");
+const Orders = require("../../model/order");
+const Address = require("../../model/address");
 
-const Reviews      =require('../../model/reviewModel')
-const moment      = require("moment");
-const fs= require('fs')
-const path= require('path')
+const Reviews = require('../../model/reviewModel')
+const moment = require("moment");
+const fs = require('fs')
+const path = require('path')
 
-let adminData 
-let catSaveMsg = "Category added suceessfully..!!";
+let adminData
 
 ///Admin home page ///
 
 const adminLogin = (req, res) => {
-  res.render("admin/login", {  layout:'loginlayout'});
+  res.render("admin/login", { layout: 'loginlayout' });
 };
 
 /////Admin Login//////
@@ -34,22 +33,21 @@ const adminDoLogin = async (req, res) => {
     let adminPassword = req.body.password;
 
 
-    //adminData = await Admin.findOne({ email: adminEmail });
+    
 
     if (adminData) {
-      if (adminPassword === adminData.password ) {
+      if (adminPassword === adminData.password) {
         req.session.aLoggedIn = true;
         req.session.admin = adminData;
         res.redirect("/admin/home");
       } else {
-        res.render("admin/login", { message: "incorrect email or password" ,layout:'loginlayout'});
+        res.render("admin/login", { message: "incorrect email or password", layout: 'loginlayout' });
       }
-    } else {
-      res.render("admin/login", { message: "incorrect email or password" , layout:'loginlayout'});
+    
     }
   } catch (error) {
     console.log(error.message);
-        res.status(500).send("Internal Server Error");
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -62,7 +60,7 @@ const adminLogout = async (req, res) => {
     res.redirect("/admin/login");
   } catch (error) {
     console.log(error.message);
-        res.status(500).send("Internal Server Error");
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -72,10 +70,10 @@ const adminLogout = async (req, res) => {
 
 const loadHome = (req, res) => {
   try {
-    res.render("admin/home",{layout:'adminlayout'});
+    res.render("admin/home", { layout: 'adminlayout' });
   } catch (error) {
     console.log(error.message);
-        res.status(500).send("Internal Server Error");
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -85,21 +83,21 @@ const loadHome = (req, res) => {
 const loadUsersData = async (req, res) => {
   try {
     var page = 1
-    if(req.query.page){
+    if (req.query.page) {
       page = req.query.page
     }
     const limit = 3;
-    let allUsersData = await await User.find()
-    .skip((page - 1) * limit)
-    .limit(limit * 1)
-    .lean();
+    let allUsersData = await  User.find()
+      .skip((page - 1) * limit)
+      .limit(limit * 1)
+      .lean();
     const count = await User.find({}).count();
-    const totalPages = Math.ceil(count/limit)
-    const pages = Array.from({length: totalPages}, (_, i) => i + 1); 
-    res.render("admin/manage_users", { allUsersData,  pages , currentPage: page ,layout: 'adminlayout' });
+    const totalPages = Math.ceil(count / limit)
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+    res.render("admin/manage_users", { allUsersData, pages, currentPage: page, layout: 'adminlayout' });
   } catch (error) {
     console.log(error.message);
-        res.status(500).send("Internal Server Error");
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -107,7 +105,7 @@ const loadUsersData = async (req, res) => {
 
 const blockUser = async (req, res) => {
   try {
-    let {id} = req.body;
+    let { id } = req.body;
 
     const blockUser = await User.findById(id);
     let isBlocked = blockUser.isBlocked;
@@ -130,12 +128,12 @@ const blockUser = async (req, res) => {
 const getCategory = async (req, res) => {
   try {
     var page = 1;
-    
+
     if (req.query.page) {
       page = req.query.page
     }
     const limit = 3;
-    let allCtegoryData = await Category.find()
+    let allCategoryData = await Category.find()
       .skip((page - 1) * limit)
       .limit(limit * 1)
       .lean();
@@ -143,16 +141,19 @@ const getCategory = async (req, res) => {
     const count = await Category.find({}).count();
     const totalPages = Math.ceil(count / limit)
     const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-    let catUpdtMsg = "Category updated successfully..!!";
+    let categoryUpdateMsg = "Category updated successfully..!!";
+    // let productcount=await Product.find({category:"663e68b26ab2bf5093a1b767"}).count()
+
 
     if (req.session.categoryUpdate) {
-      res.render("admin/category", { allCtegoryData, pages , currentPage: page,catUpdtMsg, layout: 'adminlayout' });
+      res.render("admin/category", { allCategoryData, pages, currentPage: page, categoryUpdateMsg, layout: 'adminlayout' });
       req.session.categoryUpdate = false;
     } else {
-      res.render("admin/category", { allCtegoryData, pages , currentPage: page, layout: 'adminlayout' });
+      res.render("admin/category", { allCategoryData, pages, currentPage: page, layout: 'adminlayout' });
     }
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
+    res.status(500).send("Internal Server Error");
   }
 };
 
@@ -160,16 +161,17 @@ const getCategory = async (req, res) => {
 
 const addCategory = (req, res) => {
   try {
-    let catExistMsg = "Category alredy Exist..!!";
+    let categoryExistMsg = "Category alredy Exist..!!";
+    let catSaveMsg = "Category added suceessfully..!!";
 
     if (req.session.categorySave) {
-      res.render("admin/add_category", { catSaveMsg, layout:'adminlayout' });
+      res.render("admin/add_category", { catSaveMsg, layout: 'adminlayout' });
       req.session.categorySave = false;
     } else if (req.session.catExist) {
-      res.render("admin/add_category", { catExistMsg, layout:'adminlayout' });
+      res.render("admin/add_category", { categoryExistMsg, layout: 'adminlayout' });
       req.session.catExist = false;
     } else {
-      res.render("admin/add_category",{layout:'adminlayout'});
+      res.render("admin/add_category", { layout: 'adminlayout' });
     }
   } catch (error) {
     console.log(error.message);
@@ -182,13 +184,12 @@ const addCategory = (req, res) => {
 const addNewCategory = async (req, res) => {
   const catName = req.body.name;
   const image = req.file;
-  const lCatName = catName;
-
+  
   try {
-    const catExist = await Category.findOne({ category: { $regex: new RegExp("^" + lCatName + "$", "i") } });
+    const catExist = await Category.findOne({ category: { $regex: new RegExp("^" + catName + "$", "i") } });
     if (!catExist) {
       const category = new Category({
-        category: lCatName,
+        category: catName,
         imageUrl: image.filename,
       });
 
@@ -214,10 +215,11 @@ const editCategory = async (req, res) => {
     const catData = await Category.findById({ _id: catId }).lean();
 
     if (req.session.catExist) {
-      res.render("admin/edit_category", { catData, catExistMsg, layout:'adminlayout' });
-      // req.session.catExist = false
-    } else {
-      res.render("admin/edit_category", { catData, layout:'adminlayout' });
+      res.render("admin/edit_category", { catData, categoryExistMsg, layout: 'adminlayout' });
+      
+    }
+    else{
+      res.render("admin/edit_category", { catData, layout: 'adminlayout' });
     }
   } catch (error) {
     console.log(error.message);
@@ -259,10 +261,10 @@ const updateCategory = async (req, res) => {
       req.session.categoryUpdate = true;
       res.redirect("/admin/category");
     } else {
-      // req.session.catExist = true
+     
       res.redirect("/admin/category");
     }
-  } catch (error) { 
+  } catch (error) {
     console.log(error.message);
     res.status(500).send(" Error");
   }
@@ -271,16 +273,17 @@ const updateCategory = async (req, res) => {
 
 const deleteCategory = async (req, res) => {
   try {
-    const {id}=req.body
-      // const catId = req.params.id
-      let user = await Category.findById(id)
-      let newListed = user.isListed
+    const { id } = req.body
+    let user = await Category.findById(id)
+    let newListed = user.isListed
 
-      await Category.findByIdAndUpdate(id, {
-          isListed: !newListed
-      },
+
+
+    await Category.findByIdAndUpdate(id, {
+      isListed: !newListed
+    },
       { new: true })
-      res.redirect('/admin/category')
+    res.redirect('/admin/category')
 
 
 
@@ -296,7 +299,7 @@ const deleteCategory = async (req, res) => {
 const getProduct = async (req, res) => {
   try {
     var page = 1
-    if(req.query.page){
+    if (req.query.page) {
       page = req.query.page
     }
     const limit = 3;
@@ -316,19 +319,19 @@ const getProduct = async (req, res) => {
         $skip: (page - 1) * limit
       },
       {
-          $limit: limit * 1
+        $limit: limit * 1
       }
     ]);
-    console.log(productData)
+    
 
     const count = await Product.find({}).count();
-    console.log(count)
+    
 
-    // console.log(products);
-    const totalPages = Math.ceil(count/limit)  // Example value
-    const pages = Array.from({length: totalPages}, (_, i) => i + 1);
+    
+    const totalPages = Math.ceil(count / limit)  // Example value
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-    res.render("admin/products", { productData,pages , currentPage: page, layout:'adminlayout' });
+    res.render("admin/products", { productData, pages, currentPage: page, layout: 'adminlayout' });
   } catch (error) {
     console.log(error.message);
     res.status(500).send(" Error");
@@ -343,12 +346,11 @@ const newProduct = async (req, res) => {
     let productSaveMsg = "Product added successfuly..!!";
 
     const catogories = await Category.find().lean();
-    console.log(catogories)
     if (req.session.productSave) {
-      res.render("admin/addproduct", { productSaveMsg, catogories,layout:'adminlayout' });
+      res.render("admin/addproduct", { productSaveMsg, catogories, layout: 'adminlayout' });
       req.session.productSave = false;
     } else {
-      res.render("admin/addproduct", { catogories, layout:'adminlayout' });
+      res.render("admin/addproduct", { catogories, layout: 'adminlayout' });
     }
   } catch (error) {
     console.log(error);
@@ -358,45 +360,7 @@ const newProduct = async (req, res) => {
 
 
 
-const getOrders = async (req, res) => {
-  try {
-    const PAGE_SIZE = 6;
-    const page = parseInt(req.query.page) || 1;
-    const skip = (page - 1) * PAGE_SIZE;
 
-    const orders = await Orders.find()
-      .sort({ date: -1 })
-      .skip(skip)
-      .limit(PAGE_SIZE);
-
-    const now = moment();
-
-    const ordersData = orders.map((order) => {
-      const formattedDate = moment(order.date).format("MMMM D, YYYY");
-
-      return {
-        ...order.toObject(),
-        date: formattedDate,
-      };
-    });
-
-    const totalPages = Math.ceil(await Orders.countDocuments()/PAGE_SIZE)  // Example value
-    const pages = Array.from({length: totalPages}, (_, i) => i + 1);
-
-    console.log(ordersData);
-
-    res.render("admin/orders", {
-    
-      ordersData, pages ,
-      currentPage: page,
-      // totalPages: Math.ceil(await Orders.countDocuments() / PAGE_SIZE),
-      layout:'adminlayout'
-    });
-  } catch (error) {
-    console.log(error.message);
-    res.status(500).send(" Error");
-  }
-};
 
 
 ////// Add new Product post/////////////
@@ -412,12 +376,12 @@ const addNewProduct = async (req, res) => {
     });
     const { name, price, description, category, stock } = req.body;
     const product = new Product({
-      name        : name,
-      price       : price,
-      description : description,
-      category    : category,
-      stock       : stock,
-      imageUrl    : images,
+      name: name,
+      price: price,
+      description: description,
+      category: category,
+      stock: stock,
+      imageUrl: images,
       isWishlisted: false
     });
 
@@ -435,11 +399,23 @@ const addNewProduct = async (req, res) => {
 const editProduct = async (req, res) => {
   try {
     let proId = req.params.id;
-    
-    const proData = await Product.findById({ _id: proId }).lean()
-    const catogories = await Category.find().lean()
 
-    res.render("admin/edit_product", { proData, catogories, layout:'adminlayout' })
+    // const proData = await Product.findById({ _id: proId }).lean()
+    // const catogories = await Category.find().lean()
+
+    const proData = await Product.findById(proId).populate('category').lean();
+    let currCat = proData.category.category
+    const catogories = await Category.find().lean();
+    let categoryArr = []
+    for(let i of catogories){
+      if(i.category != currCat){
+        categoryArr.push(i)
+      }
+    }
+
+
+    
+    res.render("admin/edit_product", { proData , catogories:categoryArr, layout: 'adminlayout' })
   } catch (error) {
     console.log(error.message);
     res.status(500).send(" Error");
@@ -450,10 +426,10 @@ const editProduct = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const proId   = req.params.id;
+    const proId = req.params.id;
     const product = await Product.findById(proId);
     const exImage = product.imageUrl;
-    const files   = req.files;
+    const files = req.files;
     let updImages = [];
 
     if (files && files.length > 0) {
@@ -468,14 +444,14 @@ const updateProduct = async (req, res) => {
     await Product.findByIdAndUpdate(
       proId,
       {
-        name        : name,
-        price       : price,
-        description : description,
-        category    : category,
-        stock       : stock,
-        is_blocked  : false,
+        name: name,
+        price: price,
+        description: description,
+        category: category,
+        stock: stock,
+        is_blocked: false,
 
-        imageUrl    : updImages,
+        imageUrl: updImages,
       },
       { new: true }
     );
@@ -491,22 +467,41 @@ const updateProduct = async (req, res) => {
 /// To delete Product ///
 
 const deleteProduct = async (req, res) => {
-  const {id} = req.body
-  let deletedProd=await Product.findByIdAndDelete(id)
-  const arrprod=deletedProd.imageUrl
-  console.log(arrprod)
-   arrprod.forEach((deletedImage)=>{
+  const { id } = req.body
+  let deletedProd = await Product.findByIdAndDelete(id)
+  const arrprod = deletedProd.imageUrl
+  arrprod.forEach((deletedImage) => {
     const imagePath = `public/images/products/${deletedImage}`;
-      console.log(imagePath)
-      fs.unlinkSync(imagePath);
+    fs.unlinkSync(imagePath);
+    
 
   })
-  
+
 };
 
+
+const deleteProdImage = async (req, res) => {
+  try {
+
+    const { id, image } = req.query
+    const product = await Product.findById(id);
+
+    product.imageUrl.splice(image, 1);
+
+    await product.save();
+
+    res.status(200).send({ message: 'Image deleted successfully' });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+}
+
+
+//block product
+
 const blockProduct = async (req, res) => {
-  const {id} =req.body
-  // const proId = req.params.id;
+  const { id } = req.body
+  
   const prodData = await Product.findById(id);
   const isBlocked = prodData.is_blocked;
 
@@ -520,23 +515,24 @@ const blockProduct = async (req, res) => {
   req.session.proDelete = true;
 };
 
+//load coupon
+
 const loadCoupon = async (req, res) => {
   try {
     var page = 1
-  if(req.query.page){
-    page = req.query.page
-  }
-  const limit = 5;
-  let coupon = await Coupon.find()
-  .skip((page - 1) * limit)
-  .limit(limit * 1)
-  const count = await Coupon.find({}).count();
-  const totalPages = Math.ceil(count/limit)
-  const pages = Array.from({length: totalPages}, (_, i) => i + 1); 
-  console.log(coupon)
+    if (req.query.page) {
+      page = req.query.page
+    }
+    const limit = 5;
+    let coupon = await Coupon.find()
+      .skip((page - 1) * limit)
+      .limit(limit * 1)
+    const count = await Coupon.find({}).count();
+    const totalPages = Math.ceil(count / limit)
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
 
-    // const coupon = await Coupon.find();
+    
 
     const now = moment();
 
@@ -549,25 +545,28 @@ const loadCoupon = async (req, res) => {
       };
     });
 
-    res.render("admin/coupon", { couponData,pages , currentPage: page ,layout: 'adminlayout' });
+    res.render("admin/coupon", { couponData, pages, currentPage: page, layout: 'adminlayout' });
   } catch (error) {
     console.log(error.message);
     res.status(500).send(" Error");
   }
 };
+
+// add coupon 
+
 const addCoupon = (req, res) => {
   try {
     const couponMsg = "Coupon added successfuly..!!";
     const couponExMsg = "Coupon alredy exist..!!";
 
     if (req.session.coupon) {
-      res.render("admin/add_coupon", { couponMsg, layout:'adminlayout' });
+      res.render("admin/add_coupon", { couponMsg, layout: 'adminlayout' });
       req.session.coupon = false;
     } else if (req.session.exCoupon) {
-      res.render("admin/add_coupon", { couponExMsg, layout:'adminlayout' });
+      res.render("admin/add_coupon", { couponExMsg, layout: 'adminlayout' });
       req.session.exCoupon = false;
     } else {
-      res.render("admin/add_coupon",{layout:'adminlayout'});
+      res.render("admin/add_coupon", { layout: 'adminlayout' });
     }
   } catch (error) {
     console.log(error.message);
@@ -575,10 +574,14 @@ const addCoupon = (req, res) => {
   }
 };
 
+//add coupon post
+
 const addCouponPost = async (req, res) => {
   try {
     const { code, percent, expDate, minPurchase, maxDiscount } = req.body;
 
+    console.log(req.body)
+    
     const cpnExist = await Coupon.findOne({ code: code });
 
     if (!cpnExist) {
@@ -603,20 +606,58 @@ const addCouponPost = async (req, res) => {
   }
 };
 
+//delete coupon
 
 const deleteCoupon = async (req, res) => {
   try {
-    const {id} = req.body
-    console.log(id)
+    const { id } = req.body
 
     await Coupon.findByIdAndDelete(id);
 
-   
+
     res.json({
-      success:true
+      success: true
     })
   } catch (error) {
-    console.log(error);console.log(error.message);
+    console.log(error); console.log(error.message);
+    res.status(500).send(" Error");
+  }
+};
+
+const getOrders = async (req, res) => {
+  try {
+    const PAGE_SIZE = 6;
+    const page = parseInt(req.query.page) || 1;
+    const skip = (page - 1) * PAGE_SIZE;
+
+    const orders = await Orders.find()
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(PAGE_SIZE);
+
+    const now = moment();
+
+    const ordersData = orders.map((order) => {
+      const formattedDate = moment(order.date).format("MMMM D, YYYY");
+
+      return {
+        ...order.toObject(),
+        date: formattedDate,
+      };
+    });
+
+    const totalPages = Math.ceil(await Orders.countDocuments() / PAGE_SIZE)  // Example value
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+
+    res.render("admin/orders", {
+
+      ordersData, pages,
+      currentPage: page,
+      layout: 'adminlayout'
+    });
+  } catch (error) {
+    console.log(error.message);
     res.status(500).send(" Error");
   }
 };
@@ -637,7 +678,7 @@ const orderDetails = async (req, res) => {
       orderedProDet,
       userData,
       address,
-      layout:'adminlayout'
+      layout: 'adminlayout'
     });
   } catch (error) {
     console.log(error);
@@ -645,7 +686,6 @@ const orderDetails = async (req, res) => {
 };
 
 const changeOrderStatus = async (req, res) => {
-  console.log(req.body);
 
   try {
     const id = req.query.id;
@@ -665,66 +705,12 @@ const changeOrderStatus = async (req, res) => {
 
 
 
-const deleteProdImage =  async (req, res) => {
-  try {
-
-    const { id, image } = req.query
-    const product = await Product.findById(id);
-
-    product.imageUrl.splice(image, 1);
-
-    await product.save();
-
-    res.status(200).send({ message: 'Image deleted successfully' });
-  } catch (error) {
-    res.status(500).send({ error: error.message });
-  }
-}
 
 
 
 
 
 
-// const getOrders = async (req, res) => {
-//   try {
-//     const PAGE_SIZE = 6;
-//     const page = parseInt(req.query.page) || 1;
-//     const skip = (page - 1) * PAGE_SIZE;
-
-//     const orders = await Orders.find()
-//       .sort({ date: -1 })
-//       .skip(skip)
-//       .limit(PAGE_SIZE);
-
-//     const now = moment();
-
-//     const ordersData = orders.map((order) => {
-//       const formattedDate = moment(order.date).format("MMMM D, YYYY");
-
-//       return {
-//         ...order.toObject(),
-//         date: formattedDate,
-//       };
-//     });
-
-//     const totalPages = Math.ceil(await Orders.countDocuments()/PAGE_SIZE)  // Example value
-//     const pages = Array.from({length: totalPages}, (_, i) => i + 1);
-
-//     console.log(ordersData);
-
-//     res.render("admin/orders", {
-    
-//       ordersData, pages ,
-//       currentPage: page,
-//       // totalPages: Math.ceil(await Orders.countDocuments() / PAGE_SIZE),
-//       layout:'adminlayout'
-//     });
-//   } catch (error) {
-//     console.log(error.message);
-//     res.status(500).send(" Error");
-//   }
-// };
 
 
 
@@ -797,16 +783,15 @@ module.exports = {
   deleteProdImage,
 
   getOrders,
-  orderDetails,
+  orderDetails, 
+  changeOrderStatus,
+
 
   loadCoupon,
   addCoupon,
   addCouponPost,
   deleteCoupon,
 
-  changeOrderStatus,
-
-  
 
   loadReviews
 };

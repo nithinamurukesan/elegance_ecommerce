@@ -150,7 +150,6 @@ form.addEventListener('submit', async (e) => {
     const digit4 = document.getElementById('digit4').value;
 
    const otp = digit1 + digit2 + digit3 + digit4;
-   console.log(otp)
     try {
         const response = await fetch('/otp', {
             method: 'POST',
