@@ -254,7 +254,7 @@ const doSignup = async (req, res) => {
             res.render('user/submitOtp')
         }
         else {
-            message2 = true
+            message2 ="User already exist"
 
             res.render('user/login', { message2 })
 
@@ -368,7 +368,7 @@ const ProductView = async (req, res) => {
 
             const ObjectId = mongoose.Types.ObjectId;
 
-            // query
+            
             const productExist = await User.find({ _id: userId, "cart.product": new ObjectId(proId) }).lean();
 
             if (productExist.length === 0) productExistInCart = false
@@ -377,8 +377,9 @@ const ProductView = async (req, res) => {
 
 
             const Orders = await Order.find({ userId: userId, status: "Delivered" }, { product: 1, _id: 0 })
+            console.log("ordersss",Orders)
+           
             for (let i of Orders) {
-
                 for (let j of i.product) {
                     if (j.name == proData.name) {
                         userCanReview = true

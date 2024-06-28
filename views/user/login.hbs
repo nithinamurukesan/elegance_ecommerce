@@ -46,6 +46,12 @@
                                                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                             </div>
                                             {{/if}}
+                                            {{#if message2}}
+                                            <div class="alert alert-success mt-3 alert-dismissible fade show" role="alert">
+                                               {{message2}}
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                            {{/if}}
 
                                             <!-- Login form -->
                                             <form method="post" action="/" id="loginForm">
