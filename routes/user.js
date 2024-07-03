@@ -7,7 +7,6 @@ const profile = require('../controller/user/profile')
 const cart = require('../controller/user/cart')
 const checkout = require('../controller/user/checkout')
 const orders = require('../controller/user/orders')
-const category = require('../controller/user/category')
 const wishlist = require('../controller/user/wishlist');
 const resetProfile = require('../controller/user/resetProfilePassword')
 const wallet=require('../controller/user/walletController')
@@ -35,19 +34,18 @@ router.get('/auth/google/callback', passport.authenticate('google', { failureRed
 router.get('/', userController.loadHome)
 router.post('/', userController.doLogin)
 
+
+//shop page
 router.get('/product',  userController.getProduct)
-router.post('/product', userController.getProductsPage);
+router.post('/search',userController.searchAndSort)
+
+//product view
 router.get('/productview',  userController.ProductView)
+
+//review
 router.post('/addReview', logedin, isBlocked, userController.addNewReviewPost)
-router.post('/products_filter',  userController.productSearch)
-router.post('/sort_product_name',  userController.sortProductByName)
-router.post('/sort_product_price',  userController.sortProductByPrice)
 
 
-
-router.get('/category_fil', category.catFilter)
-router.post('/category_fil', category.catFilter)
-router.get('/category', category.categoryFilter)
 
 router.get('/login', isLogout, userController.userLogin)
 
@@ -117,10 +115,9 @@ router.post('/checkoutaddress', logedin, isBlocked, checkout.addNewAddressPost)
 router.get('/my_orders', logedin, isBlocked, orders.myOrders)
 router.get('/order_details', logedin, isBlocked, orders.orderDetails)
 router.get('/order_sucess', logedin, isBlocked, orders.orderSuccess)
-router.post('/cancel_order', logedin, isBlocked, orders.cancelOrder)
-router.get('/return_order', logedin, isBlocked, orders.returnOrder)
+// router.post('/cancel_order', logedin, isBlocked, orders.cancelOrder)
+// router.get('/return_order', logedin, isBlocked, orders.returnOrder)
 
-router.get('/filter_orders', logedin, isBlocked, orders.filterOrders)
 
 router.get('/get_invoice', logedin, isBlocked, orders.getInvoice)
 
@@ -131,8 +128,8 @@ router.get('/remove_from_wishlist', logedin, isBlocked, wishlist.removeFromWishL
 
 router.post('/validate_coupon', logedin, isBlocked, checkout.validateCoupon)
 
-router.post('/apply_coupon', logedin, isBlocked, checkout.applyCoupon);
-// router.post('/remove_coupon', logedin, isBlocked, checkout.removeCoupon);
+// router.post('/apply_coupon', logedin, isBlocked, checkout.applyCoupon);
+
 
 //wallet
 
